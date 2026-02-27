@@ -6,7 +6,7 @@ This script is designed for submission-grade experiments:
 - Loads benchmark data from HuggingFace (not synthetic generation)
 - Parses natural-language rule contexts into explicit schemas
 - Applies controlled noise to real schemas (random / clustered)
-- Trains reliability estimator (frozen DistilBERT + trainable head, with fallback)
+- Trains count-based reliability estimator
 - Runs three real intervention variants in a forward-chaining reasoner
 - Builds proof graphs and computes cascade rate by chain tracing
 - Runs degraded-estimator ablation (label noise)
@@ -49,22 +49,6 @@ try:
     NUMPY_AVAILABLE = True
 except Exception:
     NUMPY_AVAILABLE = False
-
-try:
-    import torch
-    import torch.nn as nn
-    from torch.utils.data import DataLoader, TensorDataset
-
-    TORCH_AVAILABLE = True
-except Exception:
-    TORCH_AVAILABLE = False
-
-try:
-    from transformers import AutoModel, AutoTokenizer
-
-    TRANSFORMERS_AVAILABLE = True
-except Exception:
-    TRANSFORMERS_AVAILABLE = False
 
 
 FAMILIES: Tuple[str, ...] = ("IMPLICATION", "TRANSITIVE", "DEFAULT")
@@ -465,12 +449,6 @@ def configure_hf_cache_root() -> None:
         ds_cache = (hf_home / "datasets").resolve()
         ds_cache.mkdir(parents=True, exist_ok=True)
         os.environ["HF_DATASETS_CACHE"] = str(ds_cache)
-
-    if "TRANSFORMERS_CACHE" not in os.environ:
-        tf_cache = (hf_home / "transformers").resolve()
-        tf_cache.mkdir(parents=True, exist_ok=True)
-        os.environ["TRANSFORMERS_CACHE"] = str(tf_cache)
-
 
 # -----------------------------
 # Rule parsing
@@ -1520,230 +1498,6 @@ def train_count_estimator(
     )
 
 
-def train_perfect_graded_estimator(
-    records: List[SchemaRecord],
-    threshold: float,
-) -> EstimatorModel:
-    # Oracle-style graded reliability directly from corruption labels:
-    # corrupted -> 0.3, clean -> 0.8.
-    source_vals: Dict[str, List[float]] = {}
-    family_vals: Dict[str, List[float]] = {}
-    for rec in records:
-        score = 0.8 if rec.label == 1 else 0.3
-        source_vals.setdefault(rec.source_id, []).append(score)
-        family_vals.setdefault(rec.family, []).append(score)
-
-    source_scores = {k: statistics.mean(v) for k, v in source_vals.items()}
-    family_scores = {k: statistics.mean(v) for k, v in family_vals.items()}
-    global_score = statistics.mean([0.8 if rec.label == 1 else 0.3 for rec in records]) if records else 0.5
-
-    # This backend is oracle by construction for labels in records.
-    metrics = {"val_acc": 1.0, "test_acc": 1.0}
-    return EstimatorModel(
-        threshold=threshold,
-        backend="perfect_graded",
-        source_scores=source_scores,
-        family_scores=family_scores,
-        global_score=global_score,
-        metrics=metrics,
-    )
-
-
-if TORCH_AVAILABLE:
-    class FrozenHead(nn.Module):
-        def __init__(self, in_dim: int = 768, hidden_dim: int = 128, dropout: float = 0.1):
-            super().__init__()
-            self.net = nn.Sequential(
-                nn.Linear(in_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(dropout),
-                nn.Linear(hidden_dim, 1),
-            )
-
-        def forward(self, x: torch.Tensor) -> torch.Tensor:
-            return self.net(x).squeeze(-1)
-else:
-    class FrozenHead:  # type: ignore[no-redef]
-        pass
-
-
-def encode_texts_with_distilbert(
-    texts: List[str],
-    tokenizer,
-    encoder,
-    batch_size: int,
-    max_length: int,
-    device: str,
-) -> torch.Tensor:
-    all_chunks: List[torch.Tensor] = []
-    encoder.eval()
-    with torch.no_grad():
-        for i in range(0, len(texts), batch_size):
-            chunk = texts[i : i + batch_size]
-            encoded = tokenizer(
-                chunk,
-                padding=True,
-                truncation=True,
-                max_length=max_length,
-                return_tensors="pt",
-            )
-            encoded = {k: v.to(device) for k, v in encoded.items()}
-            out = encoder(**encoded)
-            cls = out.last_hidden_state[:, 0, :].detach().cpu()
-            all_chunks.append(cls)
-    if not all_chunks:
-        return torch.empty((0, 768), dtype=torch.float32)
-    return torch.cat(all_chunks, dim=0)
-
-
-def train_distilbert_frozen_head_estimator(
-    records: List[SchemaRecord],
-    cfg: Dict[str, object],
-    seed: int,
-    label_noise_rate: float,
-) -> EstimatorModel:
-    if not (TORCH_AVAILABLE and TRANSFORMERS_AVAILABLE):
-        raise RuntimeError("torch/transformers unavailable")
-
-    est_cfg = cfg["estimator"]
-    threshold = float(est_cfg["threshold"])
-    batch_size = int(est_cfg["batch_size"])
-    max_length = int(est_cfg["max_length"])
-    epochs = int(est_cfg["epochs"])
-    lr = float(est_cfg["lr"])
-    hidden = int(est_cfg["hidden_size"])
-    dropout = float(est_cfg["dropout"])
-    patience = int(est_cfg["patience"])
-    use_gpu = bool(est_cfg.get("use_gpu_if_available", False))
-
-    random.seed(seed)
-    torch.manual_seed(seed)
-
-    train_records, val_records, test_records = split_records(records, seed)
-    train_records = inject_label_noise(train_records, label_noise_rate, seed)
-
-    device = "cuda" if (use_gpu and torch.cuda.is_available()) else "cpu"
-
-    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
-    encoder = AutoModel.from_pretrained("distilbert-base-uncased")
-    encoder.to(device)
-    for param in encoder.parameters():
-        param.requires_grad = False
-
-    train_texts = [r.text for r in train_records]
-    val_texts = [r.text for r in val_records]
-    test_texts = [r.text for r in test_records]
-
-    x_train = encode_texts_with_distilbert(
-        train_texts, tokenizer, encoder, batch_size=batch_size, max_length=max_length, device=device
-    )
-    x_val = encode_texts_with_distilbert(
-        val_texts, tokenizer, encoder, batch_size=batch_size, max_length=max_length, device=device
-    )
-    x_test = encode_texts_with_distilbert(
-        test_texts, tokenizer, encoder, batch_size=batch_size, max_length=max_length, device=device
-    )
-
-    y_train = torch.tensor([r.label for r in train_records], dtype=torch.float32)
-    y_val = torch.tensor([r.label for r in val_records], dtype=torch.float32)
-    y_test = torch.tensor([r.label for r in test_records], dtype=torch.float32)
-
-    head = FrozenHead(in_dim=x_train.shape[1] if x_train.numel() else 768, hidden_dim=hidden, dropout=dropout)
-    head.to(device)
-    opt = torch.optim.Adam(head.parameters(), lr=lr)
-    criterion = nn.BCEWithLogitsLoss()
-
-    train_loader = DataLoader(
-        TensorDataset(x_train, y_train),
-        batch_size=batch_size,
-        shuffle=True,
-    )
-
-    best_state = None
-    best_val_loss = float("inf")
-    no_improve = 0
-
-    for _epoch in range(epochs):
-        head.train()
-        for xb, yb in train_loader:
-            xb = xb.to(device)
-            yb = yb.to(device)
-            logits = head(xb)
-            loss = criterion(logits, yb)
-            opt.zero_grad()
-            loss.backward()
-            opt.step()
-
-        head.eval()
-        with torch.no_grad():
-            if x_val.shape[0] > 0:
-                val_logits = head(x_val.to(device))
-                val_loss = criterion(val_logits, y_val.to(device)).item()
-            else:
-                val_loss = float("inf")
-
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_state = {k: v.detach().cpu().clone() for k, v in head.state_dict().items()}
-            no_improve = 0
-        else:
-            no_improve += 1
-            if no_improve >= patience:
-                break
-
-    if best_state is not None:
-        head.load_state_dict(best_state)
-    head.eval()
-
-    def probs(x: torch.Tensor) -> torch.Tensor:
-        if x.shape[0] == 0:
-            return torch.empty((0,), dtype=torch.float32)
-        with torch.no_grad():
-            return torch.sigmoid(head(x.to(device))).detach().cpu()
-
-    p_val = probs(x_val)
-    p_test = probs(x_test)
-
-    val_acc = (
-        ((p_val >= threshold).int() == y_val.int()).float().mean().item() if len(y_val) > 0 else 0.0
-    )
-    test_acc = (
-        ((p_test >= threshold).int() == y_test.int()).float().mean().item() if len(y_test) > 0 else 0.0
-    )
-
-    # Aggregate source/family scores using all records (train+val+test) with trained head.
-    all_records = train_records + val_records + test_records
-    all_texts = [r.text for r in all_records]
-    x_all = encode_texts_with_distilbert(
-        all_texts,
-        tokenizer,
-        encoder,
-        batch_size=batch_size,
-        max_length=max_length,
-        device=device,
-    )
-    p_all = probs(x_all).tolist()
-
-    source_vals: Dict[str, List[float]] = {}
-    family_vals: Dict[str, List[float]] = {}
-    for rec, p in zip(all_records, p_all):
-        source_vals.setdefault(rec.source_id, []).append(float(p))
-        family_vals.setdefault(rec.family, []).append(float(p))
-
-    source_scores = {k: statistics.mean(v) for k, v in source_vals.items()}
-    family_scores = {k: statistics.mean(v) for k, v in family_vals.items()}
-    global_score = statistics.mean(p_all) if p_all else 0.5
-
-    return EstimatorModel(
-        threshold=threshold,
-        backend="distilbert_frozen_head",
-        source_scores=source_scores,
-        family_scores=family_scores,
-        global_score=global_score,
-        metrics={"val_acc": val_acc, "test_acc": test_acc},
-    )
-
-
 def train_reliability_estimator(
     records: List[SchemaRecord],
     cfg: Dict[str, object],
@@ -1751,39 +1505,21 @@ def train_reliability_estimator(
     label_noise_rate: float,
 ) -> EstimatorModel:
     est_cfg = cfg["estimator"]
-    backend = str(est_cfg.get("backend", "distilbert_frozen_head"))
+    backend = str(est_cfg.get("backend", "count_fallback"))
     threshold = float(est_cfg["threshold"])
 
-    if backend == "distilbert_frozen_head":
-        if TORCH_AVAILABLE and TRANSFORMERS_AVAILABLE:
-            return train_distilbert_frozen_head_estimator(
-                records=records,
-                cfg=cfg,
-                seed=seed,
-                label_noise_rate=label_noise_rate,
-            )
-        return train_count_estimator(
-            records=records,
-            threshold=threshold,
-            seed=seed,
-            label_noise_rate=label_noise_rate,
+    if backend != "count_fallback":
+        raise ValueError(
+            f"Unsupported estimator backend for paper pipeline: {backend}. "
+            "Expected: count_fallback."
         )
 
-    if backend == "count_fallback":
-        return train_count_estimator(
-            records=records,
-            threshold=threshold,
-            seed=seed,
-            label_noise_rate=label_noise_rate,
-        )
-
-    if backend == "perfect_graded":
-        return train_perfect_graded_estimator(
-            records=records,
-            threshold=threshold,
-        )
-
-    raise ValueError(f"Unsupported estimator backend: {backend}")
+    return train_count_estimator(
+        records=records,
+        threshold=threshold,
+        seed=seed,
+        label_noise_rate=label_noise_rate,
+    )
 
 
 # -----------------------------
@@ -3365,7 +3101,7 @@ def build_report(
     lines.append("")
 
     lines.append("## Estimator Notes")
-    backend = cfg["estimator"].get("backend", "distilbert_frozen_head")
+    backend = cfg["estimator"].get("backend", "count_fallback")
     lines.append(f"- Configured estimator backend: `{backend}`")
     metric_paths: List[str] = []
     if ruletaker and isinstance(ruletaker, dict):
@@ -3377,10 +3113,6 @@ def build_report(
         + ", ".join(metric_paths)
         + "."
     )
-    if backend == "distilbert_frozen_head" and not (TORCH_AVAILABLE and TRANSFORMERS_AVAILABLE):
-        lines.append(
-            "- Runtime fallback triggered: torch/transformers unavailable; used count-based estimator for this run."
-        )
 
     if synthetic_redirect and isinstance(synthetic_redirect, dict):
         synth_cfg = cfg.get("synthetic_redirect", {})

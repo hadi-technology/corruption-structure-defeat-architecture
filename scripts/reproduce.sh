@@ -20,8 +20,7 @@ TAU_VALUES="0.3,0.5,0.7"
 
 export HF_HOME="${HF_HOME:-$(pwd)/.hf_home}"
 export HF_DATASETS_CACHE="${HF_DATASETS_CACHE:-${HF_HOME}/datasets}"
-export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-${HF_HOME}/transformers}"
-mkdir -p "${HF_HOME}" "${HF_DATASETS_CACHE}" "${TRANSFORMERS_CACHE}"
+mkdir -p "${HF_HOME}" "${HF_DATASETS_CACHE}"
 
 MAIN_OUT="outputs_main"
 SWEEP_OUT="outputs_sweep"

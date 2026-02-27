@@ -54,14 +54,6 @@
   "estimator": {
     "backend": "count_fallback",
     "threshold": 0.5,
-    "max_length": 128,
-    "batch_size": 32,
-    "epochs": 30,
-    "lr": 0.0002,
-    "hidden_size": 128,
-    "dropout": 0.1,
-    "patience": 4,
-    "use_gpu_if_available": false,
     "label_noise_rates": [
       0.0,
       0.1,
