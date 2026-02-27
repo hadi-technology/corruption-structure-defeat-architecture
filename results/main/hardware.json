@@ -1,0 +1,15 @@
+{
+  "cpu_logical_count": 8,
+  "disk_free_gib": 12.13,
+  "disk_total_gib": 115.78,
+  "gpus": [
+    {
+      "error": "Command '['nvidia-smi', '--query-gpu=name,memory.total,driver_version,cuda_version', '--format=csv,noheader']' returned non-zero exit status 2."
+    }
+  ],
+  "memory_available_gib": 13.9,
+  "memory_total_gib": 31.24,
+  "platform": "Linux-6.17.0-14-generic-x86_64-with-glibc2.39",
+  "python_version": "3.12.9",
+  "timestamp_epoch": 1772159513
+}

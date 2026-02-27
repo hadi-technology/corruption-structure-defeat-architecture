@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Virtual env / local caches
+.venv/
+.hf_home/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Experiment outputs
+outputs/
+outputs_*/
+structural_cascade/results/
+structural_cascade/results_*/
+results_rerun_*/
+results_recheck/
+outputs_*_rerun_*/
+outputs_*_recheck/
+
+# Archives and logs
+*.zip
+*.log

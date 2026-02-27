@@ -1,0 +1,550 @@
+{
+  "config": {
+    "ablation": {
+      "conditions": [
+        "clustered_negate",
+        "clustered_redirect"
+      ],
+      "metric": "chain_error_rate",
+      "reference_model": "instance_weighted",
+      "target_model": "schema_gating"
+    },
+    "estimator": {
+      "backend": "count_fallback",
+      "batch_size": 32,
+      "dropout": 0.1,
+      "epochs": 30,
+      "hidden_size": 128,
+      "label_noise_rates": [
+        0.0,
+        0.1,
+        0.2,
+        0.3
+      ],
+      "lr": 0.0002,
+      "max_length": 128,
+      "patience": 4,
+      "threshold": 0.5,
+      "use_gpu_if_available": false
+    },
+    "noise": {
+      "clustered_family": "TRANSITIVE",
+      "clustered_rate": 0.6,
+      "random_rate": 0.2
+    },
+    "proofwriter": {
+      "dataset_name": "tasksource/proofwriter",
+      "default_policy": "random_tie",
+      "depth_aliases": {},
+      "depths": [
+        3,
+        5
+      ],
+      "local_jsonl_dir": null,
+      "max_rows_scan_per_depth": 120000,
+      "max_rules_per_problem": 50,
+      "num_problems": 300,
+      "parse_buffer_factor": 3,
+      "sample_seed": 1337,
+      "split_preference": [
+        "train",
+        "validation",
+        "test"
+      ]
+    },
+    "reasoner": {
+      "breadth_limit": 50,
+      "decision_confidence_threshold": 0.05,
+      "default_policy": "closed_world",
+      "max_steps": 7
+    },
+    "ruletaker": {
+      "dataset_name": "tasksource/ruletaker",
+      "depth_aliases": {
+        "4": "depth-3ext"
+      },
+      "depths": [
+        3,
+        4,
+        5
+      ],
+      "local_jsonl_dir": null,
+      "max_rows_scan_per_depth": 120000,
+      "max_rules_per_problem": 50,
+      "num_problems": 500,
+      "parse_buffer_factor": 3,
+      "sample_seed": 1337,
+      "split_preference": [
+        "train",
+        "validation",
+        "test"
+      ]
+    },
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "synthetic_redirect": {
+      "chain_lengths": [
+        3,
+        4,
+        5
+      ],
+      "enabled": true,
+      "n_problems": 60
+    }
+  },
+  "hardware": {
+    "cpu_logical_count": 8,
+    "disk_free_gib": 10.52,
+    "disk_total_gib": 115.78,
+    "gpus": [
+      {
+        "error": "Command '['nvidia-smi', '--query-gpu=name,memory.total,driver_version,cuda_version', '--format=csv,noheader']' returned non-zero exit status 2."
+      }
+    ],
+    "memory_available_gib": 13.81,
+    "memory_total_gib": 31.24,
+    "platform": "Linux-6.17.0-14-generic-x86_64-with-glibc2.39",
+    "python_version": "3.12.9",
+    "timestamp_epoch": 1772159675
+  },
+  "sweep": {
+    "condition": "clustered_redirect",
+    "datasets": {
+      "proofwriter": {
+        "10%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.9077777777777778,
+            "accuracy_std": 0.01662958838566198,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.9244444444444444,
+            "accuracy_std": 0.01749779527558178,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.9244444444444444,
+            "accuracy_std": 0.017284832429004474,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.9277777777777777,
+            "accuracy_std": 0.01498970840359116,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.9233333333333333,
+            "accuracy_std": 0.016555182695279252,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          }
+        },
+        "20%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.8477777777777777,
+            "accuracy_std": 0.024695678634325396,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.8533333333333333,
+            "accuracy_std": 0.03474776838024866,
+            "cascade_mean": 0.01823109140182311,
+            "cascade_std": 0.013115379802124825,
+            "chain_error_mean": 0.01823109140182311,
+            "chain_error_std": 0.013115379802124825
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.8588888888888889,
+            "accuracy_std": 0.031778554769055764,
+            "cascade_mean": 0.01875,
+            "cascade_std": 0.013501543121683042,
+            "chain_error_mean": 0.01875,
+            "chain_error_std": 0.013501543121683042
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.8677777777777778,
+            "accuracy_std": 0.02726187588085621,
+            "cascade_mean": 0.019658119658119658,
+            "cascade_std": 0.014250711111566724,
+            "chain_error_mean": 0.019658119658119658,
+            "chain_error_std": 0.014250711111566724
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.8466666666666667,
+            "accuracy_std": 0.033993463423951875,
+            "cascade_mean": 0.017195767195767195,
+            "cascade_std": 0.012266691131608073,
+            "chain_error_mean": 0.017195767195767195,
+            "chain_error_std": 0.012266691131608073
+          }
+        },
+        "40%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.7111111111111111,
+            "accuracy_std": 0.005665577237325309,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.7144444444444444,
+            "accuracy_std": 0.004157397096415488,
+            "cascade_mean": 0.003875968992248062,
+            "cascade_std": 0.005481447916174787,
+            "chain_error_mean": 0.003875968992248062,
+            "chain_error_std": 0.005481447916174787
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.7266666666666667,
+            "accuracy_std": 0.009813067629253151,
+            "cascade_mean": 0.004219409282700422,
+            "cascade_std": 0.005967145832797869,
+            "chain_error_mean": 0.004219409282700422,
+            "chain_error_std": 0.005967145832797869
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.74,
+            "accuracy_std": 0.008164965809277268,
+            "cascade_mean": 0.008547008547008546,
+            "cascade_std": 0.012087295404898248,
+            "chain_error_mean": 0.008547008547008546,
+            "chain_error_std": 0.012087295404898248
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.7166666666666667,
+            "accuracy_std": 0.002721655269759059,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          }
+        },
+        "5%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.9522222222222222,
+            "accuracy_std": 0.008314794192830995,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.9633333333333334,
+            "accuracy_std": 0.008164965809277268,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.9633333333333334,
+            "accuracy_std": 0.008164965809277268,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.9633333333333334,
+            "accuracy_std": 0.008164965809277268,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.9622222222222222,
+            "accuracy_std": 0.008314794192830995,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0,
+            "chain_error_std": 0.0
+          }
+        },
+        "60%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.6444444444444444,
+            "accuracy_std": 0.010999438818457384,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0032362459546925564,
+            "chain_error_std": 0.004576742920301278
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.6188888888888889,
+            "accuracy_std": 0.010999438818457398,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.002976190476190476,
+            "chain_error_std": 0.004208968935634211
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.64,
+            "accuracy_std": 0.014401645996461902,
+            "cascade_mean": 0.0032051282051282055,
+            "cascade_std": 0.0045327357768368435,
+            "chain_error_mean": 0.00634978229317852,
+            "chain_error_std": 0.004490584957846389
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.6733333333333333,
+            "accuracy_std": 0.009428090415820642,
+            "cascade_mean": 0.003472222222222222,
+            "cascade_std": 0.004910463758239913,
+            "chain_error_mean": 0.006944444444444444,
+            "chain_error_std": 0.004910463758239913
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.6188888888888889,
+            "accuracy_std": 0.011331154474650605,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0029498525073746312,
+            "chain_error_std": 0.004171721422929484
+          }
+        }
+      },
+      "ruletaker": {
+        "10%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.858,
+            "accuracy_std": 0.021416504538945367,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.027076259145269507,
+            "chain_error_std": 0.00761000908482693
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.864,
+            "accuracy_std": 0.023036203390894683,
+            "cascade_mean": 0.022149202872094438,
+            "cascade_std": 0.015842375909583588,
+            "chain_error_mean": 0.04129244249726177,
+            "chain_error_std": 0.01742096934671207
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.866,
+            "accuracy_std": 0.02405549140355831,
+            "cascade_mean": 0.022464859437751002,
+            "cascade_std": 0.01601023956482381,
+            "chain_error_mean": 0.0418781607913134,
+            "chain_error_std": 0.017395725773511513
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.8693333333333333,
+            "accuracy_std": 0.023342855200015483,
+            "cascade_mean": 0.02309836718438869,
+            "cascade_std": 0.016449124992483778,
+            "chain_error_mean": 0.048370816207429446,
+            "chain_error_std": 0.02089271528939153
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.86,
+            "accuracy_std": 0.02209072203437454,
+            "cascade_mean": 0.021566597653554176,
+            "cascade_std": 0.015495326514366947,
+            "chain_error_mean": 0.03621372271257855,
+            "chain_error_std": 0.013309379370261509
+          }
+        },
+        "20%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.7873333333333333,
+            "accuracy_std": 0.0018856180831641285,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.0345646046580626,
+            "chain_error_std": 0.011976580858590363
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.7893333333333333,
+            "accuracy_std": 0.00659966329107445,
+            "cascade_mean": 0.0504178685135261,
+            "cascade_std": 0.007672992517489177,
+            "chain_error_mean": 0.07899625863573029,
+            "chain_error_std": 0.010495246060480507
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.7926666666666667,
+            "accuracy_std": 0.008379870059984364,
+            "cascade_mean": 0.05117157974300831,
+            "cascade_std": 0.007350888082487806,
+            "chain_error_mean": 0.08029730410682791,
+            "chain_error_std": 0.010626249774392202
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.7993333333333333,
+            "accuracy_std": 0.007717224601860157,
+            "cascade_mean": 0.049668571882194174,
+            "cascade_std": 0.006917375035532507,
+            "chain_error_mean": 0.0865688920642481,
+            "chain_error_std": 0.00665671484918655
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.7853333333333333,
+            "accuracy_std": 0.0041096093353126546,
+            "cascade_mean": 0.04342625183746679,
+            "cascade_std": 0.003805331467909388,
+            "chain_error_mean": 0.0713611414545994,
+            "chain_error_std": 0.011050572094362427
+          }
+        },
+        "40%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.6953333333333334,
+            "accuracy_std": 0.008993825042154655,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.045908547740659666,
+            "chain_error_std": 0.004713558118143114
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.6813333333333333,
+            "accuracy_std": 0.008055363982396358,
+            "cascade_mean": 0.0334964045155128,
+            "cascade_std": 0.013146900795276157,
+            "chain_error_mean": 0.050213551487436836,
+            "chain_error_std": 0.010373490715484704
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.696,
+            "accuracy_std": 0.012961481396815697,
+            "cascade_mean": 0.04344678052313822,
+            "cascade_std": 0.012300144156422223,
+            "chain_error_mean": 0.06555151667442399,
+            "chain_error_std": 0.008911756103092219
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.712,
+            "accuracy_std": 0.010708252269472683,
+            "cascade_mean": 0.05563173429571357,
+            "cascade_std": 0.00204945269106353,
+            "chain_error_mean": 0.10189404286726486,
+            "chain_error_std": 0.002290475432173936
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.6706666666666667,
+            "accuracy_std": 0.010370899457402705,
+            "cascade_mean": 0.01797149597958496,
+            "cascade_std": 0.012824293514783326,
+            "chain_error_mean": 0.034137416341663056,
+            "chain_error_std": 0.015404719509391634
+          }
+        },
+        "5%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.8946666666666667,
+            "accuracy_std": 0.006182412330330475,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.019738562091503268,
+            "chain_error_std": 0.016010804161153046
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.896,
+            "accuracy_std": 0.009933109617167568,
+            "cascade_mean": 0.013888888888888888,
+            "cascade_std": 0.019641855032959652,
+            "chain_error_mean": 0.03443877551020408,
+            "chain_error_std": 0.02591096766189216
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.8973333333333333,
+            "accuracy_std": 0.011115554667022054,
+            "cascade_mean": 0.014492753623188406,
+            "cascade_std": 0.020495848730044855,
+            "chain_error_mean": 0.03534457261165336,
+            "chain_error_std": 0.026904548566470284
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.8986666666666667,
+            "accuracy_std": 0.00928559218478942,
+            "cascade_mean": 0.014492753623188406,
+            "cascade_std": 0.020495848730044855,
+            "chain_error_mean": 0.03534457261165336,
+            "chain_error_std": 0.026904548566470284
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.8953333333333333,
+            "accuracy_std": 0.009428090415820642,
+            "cascade_mean": 0.006802721088435374,
+            "cascade_std": 0.009620500424306769,
+            "chain_error_mean": 0.027210884353741496,
+            "chain_error_std": 0.019241000848613538
+          }
+        },
+        "60%": {
+          "aspic_v1_terminal": {
+            "accuracy_mean": 0.6446666666666667,
+            "accuracy_std": 0.0009428090415820643,
+            "cascade_mean": 0.0,
+            "cascade_std": 0.0,
+            "chain_error_mean": 0.06379737192915635,
+            "chain_error_std": 0.009600073468528291
+          },
+          "aspic_v2": {
+            "accuracy_mean": 0.6226666666666667,
+            "accuracy_std": 0.012256517540566834,
+            "cascade_mean": 0.01783748080775179,
+            "cascade_std": 0.007184048001876372,
+            "chain_error_mean": 0.046208948076877567,
+            "chain_error_std": 0.010413611744822783
+          },
+          "aspic_v2_window1": {
+            "accuracy_mean": 0.6373333333333333,
+            "accuracy_std": 0.011813363431112911,
+            "cascade_mean": 0.03723740522174235,
+            "cascade_std": 0.01454252359050675,
+            "chain_error_mean": 0.06676768134907236,
+            "chain_error_std": 0.018185665719989256
+          },
+          "instance_weighted": {
+            "accuracy_mean": 0.6693333333333333,
+            "accuracy_std": 0.004988876515698593,
+            "cascade_mean": 0.06637661758143686,
+            "cascade_std": 0.012141826319300133,
+            "chain_error_mean": 0.1369915287251298,
+            "chain_error_std": 0.01890282677608969
+          },
+          "schema_gating": {
+            "accuracy_mean": 0.6086666666666667,
+            "accuracy_std": 0.009977753031397186,
+            "cascade_mean": 0.0034220432230382476,
+            "cascade_std": 0.002423183863300441,
+            "chain_error_mean": 0.02909778986249426,
+            "chain_error_std": 0.005617681190674985
+          }
+        }
+      }
+    },
+    "metric": "chain_error_mean",
+    "rates": [
+      0.05,
+      0.1,
+      0.2,
+      0.4,
+      0.6
+    ]
+  }
+}

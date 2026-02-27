@@ -1,0 +1,12 @@
+[project]
+name = "hujjiyya"
+version = "0.1.0"
+description = "Submission artifact for corruption-structure vs defeat-architecture experiments"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true

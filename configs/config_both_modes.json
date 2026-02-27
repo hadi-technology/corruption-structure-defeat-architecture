@@ -1,0 +1,96 @@
+{
+  "seeds": [
+    42,
+    123,
+    456
+  ],
+  "ruletaker": {
+    "dataset_name": "tasksource/ruletaker",
+    "local_jsonl_dir": null,
+    "num_problems": 500,
+    "depths": [
+      3,
+      4,
+      5
+    ],
+    "depth_aliases": {
+      "4": "depth-3ext"
+    },
+    "split_preference": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "sample_seed": 1337,
+    "max_rules_per_problem": 50,
+    "parse_buffer_factor": 3,
+    "max_rows_scan_per_depth": 120000
+  },
+  "proofwriter": {
+    "dataset_name": "tasksource/proofwriter",
+    "local_jsonl_dir": null,
+    "num_problems": 300,
+    "depths": [
+      3,
+      5
+    ],
+    "depth_aliases": {},
+    "split_preference": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "sample_seed": 1337,
+    "max_rules_per_problem": 50,
+    "parse_buffer_factor": 3,
+    "max_rows_scan_per_depth": 120000,
+    "default_policy": "random_tie"
+  },
+  "noise": {
+    "random_rate": 0.2,
+    "clustered_rate": 0.6,
+    "clustered_family": "TRANSITIVE"
+  },
+  "estimator": {
+    "backend": "count_fallback",
+    "threshold": 0.5,
+    "max_length": 128,
+    "batch_size": 32,
+    "epochs": 30,
+    "lr": 0.0002,
+    "hidden_size": 128,
+    "dropout": 0.1,
+    "patience": 4,
+    "use_gpu_if_available": false,
+    "label_noise_rates": [
+      0.0,
+      0.1,
+      0.2,
+      0.3
+    ]
+  },
+  "reasoner": {
+    "max_steps": 7,
+    "breadth_limit": 50,
+    "decision_confidence_threshold": 0.05,
+    "default_policy": "closed_world"
+  },
+  "synthetic_redirect": {
+    "enabled": true,
+    "n_problems": 60,
+    "chain_lengths": [
+      3,
+      4,
+      5
+    ]
+  },
+  "ablation": {
+    "target_model": "schema_gating",
+    "reference_model": "instance_weighted",
+    "metric": "chain_error_rate",
+    "conditions": [
+      "clustered_negate",
+      "clustered_redirect"
+    ]
+  }
+}

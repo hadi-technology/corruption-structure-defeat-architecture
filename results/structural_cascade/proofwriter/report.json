@@ -1,0 +1,86 @@
+{
+  "avg_reach_depth": 1.222767857142857,
+  "avg_reachable_schema_count": 1.8370535714285714,
+  "by_family": {
+    "IMPLICATION": {
+      "avg_reach_depth": 0.0,
+      "avg_reachable_schema_count": 0.0,
+      "cascade_eligible": 0,
+      "cascade_eligible_pct": 0.0,
+      "multi_hop": 0,
+      "multi_hop_pct": 0.0,
+      "terminal": 490,
+      "terminal_pct": 1.0,
+      "total": 490
+    },
+    "TRANSITIVE": {
+      "avg_reach_depth": 1.5651428571428572,
+      "avg_reachable_schema_count": 2.3514285714285714,
+      "cascade_eligible": 1187,
+      "cascade_eligible_pct": 0.6782857142857143,
+      "multi_hop": 843,
+      "multi_hop_pct": 0.4817142857142857,
+      "terminal": 563,
+      "terminal_pct": 0.32171428571428573,
+      "total": 1750
+    }
+  },
+  "by_problem_depth": {
+    "3": {
+      "avg_reach_depth": 0.9394550958627649,
+      "avg_reachable_schema_count": 1.284561049445005,
+      "cascade_eligible": 470,
+      "cascade_eligible_pct": 0.47426841574167505,
+      "multi_hop": 292,
+      "multi_hop_pct": 0.2946518668012109,
+      "terminal": 521,
+      "terminal_pct": 0.5257315842583249,
+      "total": 991
+    },
+    "5": {
+      "avg_reach_depth": 1.4475580464371498,
+      "avg_reachable_schema_count": 2.2754203362690153,
+      "cascade_eligible": 717,
+      "cascade_eligible_pct": 0.5740592473979184,
+      "multi_hop": 551,
+      "multi_hop_pct": 0.4411529223378703,
+      "terminal": 532,
+      "terminal_pct": 0.42594075260208164,
+      "total": 1249
+    }
+  },
+  "cascade_eligible_count": 1187,
+  "cascade_eligible_pct": 0.5299107142857142,
+  "dataset_key": "proofwriter",
+  "max_problems": null,
+  "max_schemas": null,
+  "multi_hop_count": 843,
+  "multi_hop_pct": 0.3763392857142857,
+  "problem_multi_hop_exposure_mean": 0.3644272486772487,
+  "problem_redirect_exposure_mean": 0.5294417989417989,
+  "problems_analyzed": 300,
+  "problems_with_multi_hop_exposure_count": 249,
+  "problems_with_multi_hop_exposure_pct": 0.83,
+  "problems_with_redirect_exposure_count": 294,
+  "problems_with_redirect_exposure_pct": 0.98,
+  "runtime_seconds": 29.37,
+  "simulation_answer_changed_count": 28,
+  "simulation_answer_changed_pct_of_ok": 0.4666666666666667,
+  "simulation_class_counts": {
+    "harmful-cascade": 9,
+    "propagating-but-nonharmful": 15,
+    "terminal-like": 36
+  },
+  "simulation_consumed_count": 24,
+  "simulation_consumed_pct_of_ok": 0.4,
+  "simulation_count": 60,
+  "simulation_harmful_count": 9,
+  "simulation_harmful_pct_of_ok": 0.15,
+  "simulation_ok_count": 60,
+  "simulation_status_counts": {
+    "ok": 60
+  },
+  "terminal_count": 1053,
+  "terminal_pct": 0.4700892857142857,
+  "total_schemas_analyzed": 2240
+}

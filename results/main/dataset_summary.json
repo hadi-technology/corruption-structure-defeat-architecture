@@ -1,0 +1,1821 @@
+{
+  "proofwriter": {
+    "clean": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 0
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.0
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 0,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.0,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 0
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.0
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 0,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.0,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 0
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.0
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 0,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.0,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        }
+      }
+    },
+    "clustered_negate": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1043
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.596
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 1043,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.465625,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1024
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.5851428571428572
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 1024,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.45714285714285713,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1076
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.6148571428571429
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 1076,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.48035714285714287,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        }
+      }
+    },
+    "clustered_redirect": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1071
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.612
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 1071,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.478125,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1047
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.5982857142857143
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 1047,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.4674107142857143,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1060
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.6057142857142858
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 1060,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.4732142857142857,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        }
+      }
+    },
+    "random_negate": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 106,
+            "TRANSITIVE": 359
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.2163265306122449,
+            "TRANSITIVE": 0.20514285714285715
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 465,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.20758928571428573,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 85,
+            "TRANSITIVE": 366
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.17346938775510204,
+            "TRANSITIVE": 0.20914285714285713
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 451,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.20133928571428572,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 90,
+            "TRANSITIVE": 357
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.1836734693877551,
+            "TRANSITIVE": 0.204
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 447,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.19955357142857144,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        }
+      }
+    },
+    "random_redirect": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 79,
+            "TRANSITIVE": 358
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.16122448979591836,
+            "TRANSITIVE": 0.20457142857142857
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 437,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.19508928571428572,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 100,
+            "TRANSITIVE": 344
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.20408163265306123,
+            "TRANSITIVE": 0.19657142857142856
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 444,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.1982142857142857,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4495535714285714,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4974486484496543,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 104,
+            "TRANSITIVE": 346
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21224489795918366,
+            "TRANSITIVE": 0.1977142857142857
+          },
+          "depth_histogram": {
+            "3": 150,
+            "5": 150
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 9.45,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.516728166862971,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 490,
+            "TRANSITIVE": 1750
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21875,
+            "TRANSITIVE": 0.78125
+          },
+          "multi_antecedent_schema_ratio": 0.44955357142857144,
+          "num_corrupted": 450,
+          "num_problems": 300,
+          "num_schemas": 2240,
+          "overall_corruption_rate": 0.20089285714285715,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.6066666666666665,
+            "5": 8.326666666666666
+          },
+          "schemas_per_depth_std": {
+            "3": 1.7161843982768543,
+            "5": 1.0487876598985877
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.466666666666667,
+          "schemas_per_problem_min": 3,
+          "schemas_per_problem_std": 1.6619934483090546
+        }
+      }
+    }
+  },
+  "ruletaker": {
+    "clean": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 0
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.0
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 0,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.0,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 0
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.0
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 0,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.0,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 0
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.0
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 0,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.0,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        }
+      }
+    },
+    "clustered_negate": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1608
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.6058779201205727
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 1608,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.4552661381653454,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1550
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.5840241145440844
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 1550,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.4388448471121178,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1626
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.6126601356443104
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 1626,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.4603624009060023,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        }
+      }
+    },
+    "clustered_redirect": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1626
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.6126601356443104
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 1626,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.4603624009060023,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1593
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.6002260738507913
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 1593,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.45101925254813136,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 0,
+            "TRANSITIVE": 1585
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.0,
+            "TRANSITIVE": 0.5972117558402411
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 1585,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.4487542468856172,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        }
+      }
+    },
+    "random_negate": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 188,
+            "TRANSITIVE": 533
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.214123006833713,
+            "TRANSITIVE": 0.20082893745290128
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 721,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.20413363533408835,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 170,
+            "TRANSITIVE": 544
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.19362186788154898,
+            "TRANSITIVE": 0.20497362471740768
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 714,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.20215175537938845,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 166,
+            "TRANSITIVE": 555
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.18906605922551253,
+            "TRANSITIVE": 0.20911831198191408
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 721,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.20413363533408835,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        }
+      }
+    },
+    "random_redirect": {
+      "seed_quality_flags": {
+        "123": [
+          "family_distribution_default_too_rare"
+        ],
+        "42": [
+          "family_distribution_default_too_rare"
+        ],
+        "456": [
+          "family_distribution_default_too_rare"
+        ]
+      },
+      "seeds": {
+        "123": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 170,
+            "TRANSITIVE": 528
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.19362186788154898,
+            "TRANSITIVE": 0.19894498869630747
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 698,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.19762174405436014,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "42": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 191,
+            "TRANSITIVE": 491
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.21753986332574032,
+            "TRANSITIVE": 0.1850037678975132
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 682,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.19309173272933183,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        },
+        "456": {
+          "antecedents_per_schema_max": 2,
+          "antecedents_per_schema_mean": 1.4629105322763307,
+          "antecedents_per_schema_min": 1,
+          "antecedents_per_schema_std": 0.4986224738055585,
+          "corrupted_family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 188,
+            "TRANSITIVE": 520
+          },
+          "corruption_rates_by_family": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.214123006833713,
+            "TRANSITIVE": 0.19593067068575734
+          },
+          "depth_histogram": {
+            "3": 167,
+            "4": 167,
+            "5": 166
+          },
+          "facts_per_problem_max": 16,
+          "facts_per_problem_mean": 8.694,
+          "facts_per_problem_min": 1,
+          "facts_per_problem_std": 4.422710028930226,
+          "family_counts": {
+            "DEFAULT": 0,
+            "IMPLICATION": 878,
+            "TRANSITIVE": 2654
+          },
+          "family_ratios": {
+            "DEFAULT": 0.0,
+            "IMPLICATION": 0.24858437146092865,
+            "TRANSITIVE": 0.7514156285390714
+          },
+          "multi_antecedent_schema_ratio": 0.46291053227633067,
+          "num_corrupted": 708,
+          "num_problems": 500,
+          "num_schemas": 3532,
+          "overall_corruption_rate": 0.20045300113250283,
+          "quality_flags": [
+            "family_distribution_default_too_rare"
+          ],
+          "schemas_per_depth_mean": {
+            "3": 6.736526946107785,
+            "4": 6.317365269461078,
+            "5": 8.144578313253012
+          },
+          "schemas_per_depth_std": {
+            "3": 1.4485325748948115,
+            "4": 1.892594519774064,
+            "5": 0.8867502619111902
+          },
+          "schemas_per_problem_max": 9,
+          "schemas_per_problem_mean": 7.064,
+          "schemas_per_problem_min": 1,
+          "schemas_per_problem_std": 1.6637018963744676
+        }
+      }
+    }
+  }
+}
