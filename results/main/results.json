@@ -412,7 +412,7 @@
           "transient_consumption_mean": 0.0,
           "transient_consumption_std": 0.0
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 1.0,
           "accuracy_std": 0.0,
           "cascade_mean": 0.0,
@@ -604,7 +604,7 @@
           "transient_consumption_mean": 0.059624614540625856,
           "transient_consumption_std": 0.010345575521724897
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.5788888888888889,
           "accuracy_std": 0.02314740739555518,
           "cascade_mean": 0.0,
@@ -796,7 +796,7 @@
           "transient_consumption_mean": 0.28581111212960003,
           "transient_consumption_std": 0.026743339671589744
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.64,
           "accuracy_std": 0.014401645996461902,
           "cascade_mean": 0.0032051282051282055,
@@ -988,7 +988,7 @@
           "transient_consumption_mean": 0.15978848094717113,
           "transient_consumption_std": 0.009115143650120727
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.76,
           "accuracy_std": 0.004714045207910321,
           "cascade_mean": 0.0,
@@ -1180,7 +1180,7 @@
           "transient_consumption_mean": 0.49944193782766066,
           "transient_consumption_std": 0.025148657982837084
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.8488888888888889,
           "accuracy_std": 0.004157397096415488,
           "cascade_mean": 0.007575757575757576,
@@ -1542,7 +1542,7 @@
           "transient_consumption_mean": 0.0,
           "transient_consumption_std": 0.0
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.928,
           "accuracy_std": 0.0,
           "cascade_mean": 0.0,
@@ -1734,7 +1734,7 @@
           "transient_consumption_mean": 0.059978850618018796,
           "transient_consumption_std": 0.009724716156055682
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.6073333333333333,
           "accuracy_std": 0.013597385369580772,
           "cascade_mean": 0.0,
@@ -1926,7 +1926,7 @@
           "transient_consumption_mean": 0.25790708489454983,
           "transient_consumption_std": 0.011165526595729993
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.6373333333333333,
           "accuracy_std": 0.011813363431112911,
           "cascade_mean": 0.03723740522174235,
@@ -2118,7 +2118,7 @@
           "transient_consumption_mean": 0.11390313361309083,
           "transient_consumption_std": 0.01748831875381745
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.77,
           "accuracy_std": 0.009092121131323912,
           "cascade_mean": 0.0,
@@ -2310,7 +2310,7 @@
           "transient_consumption_mean": 0.4179202618327105,
           "transient_consumption_std": 0.028679533085540505
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "accuracy_mean": 0.7846666666666667,
           "accuracy_std": 0.0041096093353126546,
           "cascade_mean": 0.06200897867564534,
@@ -2606,7 +2606,7 @@
         "chain_error_mean": 0.0,
         "chain_error_std": 0.0
       },
-      "aspic_v2_window1": {
+      "aspic_v2_persistent": {
         "chain_error_mean": 0.0,
         "chain_error_std": 0.0
       },
@@ -2628,7 +2628,7 @@
         "chain_error_mean": 0.4444444444444445,
         "chain_error_std": 0.06285393610547088
       },
-      "aspic_v2_window1": {
+      "aspic_v2_persistent": {
         "chain_error_mean": 1.0,
         "chain_error_std": 0.0
       },
@@ -2651,7 +2651,7 @@
           "chain_error_mean": 0.4444444444444445,
           "chain_error_std": 0.06285393610547088
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "chain_error_mean": 1.0,
           "chain_error_std": 0.0
         },
@@ -2673,7 +2673,7 @@
           "chain_error_mean": 0.46111111111111114,
           "chain_error_std": 0.02078698548207745
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "chain_error_mean": 1.0,
           "chain_error_std": 0.0
         },
@@ -2695,7 +2695,7 @@
           "chain_error_mean": 0.46111111111111114,
           "chain_error_std": 0.047790695928014604
         },
-        "aspic_v2_window1": {
+        "aspic_v2_persistent": {
           "chain_error_mean": 1.0,
           "chain_error_std": 0.0
         },

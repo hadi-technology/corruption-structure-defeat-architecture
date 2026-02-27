@@ -97,7 +97,7 @@ def simulate_schema_corruption(
             "simulation_status": "schema_not_found",
         }
 
-    rng = random.Random(rex.deterministic_seed("expc_redirect", seed, problem.problem_id, sid))
+    rng = random.Random(rex.deterministic_seed("structural_redirect", seed, problem.problem_id, sid))
     replacement = choose_redirect_target(corrupted, idx, rng)
     if replacement is None:
         return {

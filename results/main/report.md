@@ -39,7 +39,6 @@
 
 - `Cascade` is defined as `corrupted_chain / incorrect` (paper definition).
 - `Chain-Linked Error` is `incorrect_with_chain / incorrect` (diagnostic coverage metric).
-- `aspic_v2_persistent` is the report label for `aspic_v2_window1`.
 - It keeps blocked transient nodes visible for one extra step; under redirect corruption this can approach instance-weighted behavior via cross-step consumption.
 
 ## RuleTaker Mechanism Checks
@@ -172,7 +171,6 @@
 
 - `Cascade` is defined as `corrupted_chain / incorrect` (paper definition).
 - `Chain-Linked Error` is `incorrect_with_chain / incorrect` (diagnostic coverage metric).
-- `aspic_v2_persistent` is the report label for `aspic_v2_window1`.
 - It keeps blocked transient nodes visible for one extra step; under redirect corruption this can approach instance-weighted behavior via cross-step consumption.
 
 ## ProofWriter Mechanism Checks

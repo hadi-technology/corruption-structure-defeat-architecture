@@ -131,7 +131,7 @@
             "chain_error_mean": 0.0,
             "chain_error_std": 0.0
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.9244444444444444,
             "accuracy_std": 0.017284832429004474,
             "cascade_mean": 0.0,
@@ -173,7 +173,7 @@
             "chain_error_mean": 0.01823109140182311,
             "chain_error_std": 0.013115379802124825
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.8588888888888889,
             "accuracy_std": 0.031778554769055764,
             "cascade_mean": 0.01875,
@@ -215,7 +215,7 @@
             "chain_error_mean": 0.003875968992248062,
             "chain_error_std": 0.005481447916174787
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.7266666666666667,
             "accuracy_std": 0.009813067629253151,
             "cascade_mean": 0.004219409282700422,
@@ -257,7 +257,7 @@
             "chain_error_mean": 0.0,
             "chain_error_std": 0.0
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.9633333333333334,
             "accuracy_std": 0.008164965809277268,
             "cascade_mean": 0.0,
@@ -299,7 +299,7 @@
             "chain_error_mean": 0.002976190476190476,
             "chain_error_std": 0.004208968935634211
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.64,
             "accuracy_std": 0.014401645996461902,
             "cascade_mean": 0.0032051282051282055,
@@ -343,7 +343,7 @@
             "chain_error_mean": 0.04129244249726177,
             "chain_error_std": 0.01742096934671207
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.866,
             "accuracy_std": 0.02405549140355831,
             "cascade_mean": 0.022464859437751002,
@@ -385,7 +385,7 @@
             "chain_error_mean": 0.07899625863573029,
             "chain_error_std": 0.010495246060480507
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.7926666666666667,
             "accuracy_std": 0.008379870059984364,
             "cascade_mean": 0.05117157974300831,
@@ -427,7 +427,7 @@
             "chain_error_mean": 0.050213551487436836,
             "chain_error_std": 0.010373490715484704
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.696,
             "accuracy_std": 0.012961481396815697,
             "cascade_mean": 0.04344678052313822,
@@ -469,7 +469,7 @@
             "chain_error_mean": 0.03443877551020408,
             "chain_error_std": 0.02591096766189216
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.8973333333333333,
             "accuracy_std": 0.011115554667022054,
             "cascade_mean": 0.014492753623188406,
@@ -511,7 +511,7 @@
             "chain_error_mean": 0.046208948076877567,
             "chain_error_std": 0.010413611744822783
           },
-          "aspic_v2_window1": {
+          "aspic_v2_persistent": {
             "accuracy_mean": 0.6373333333333333,
             "accuracy_std": 0.011813363431112911,
             "cascade_mean": 0.03723740522174235,

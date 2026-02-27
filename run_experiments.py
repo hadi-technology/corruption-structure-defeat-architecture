@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Real experiment pipeline for schema-level admissibility on RuleTaker.
+Real experiment pipeline for paper reproduction on RuleTaker and ProofWriter.
 
 This script is designed for submission-grade experiments:
-- Loads actual RuleTaker data from HuggingFace (not synthetic generation)
+- Loads benchmark data from HuggingFace (not synthetic generation)
 - Parses natural-language rule contexts into explicit schemas
 - Applies controlled noise to real schemas (random / clustered)
 - Trains reliability estimator (frozen DistilBERT + trainable head, with fallback)
@@ -72,7 +72,7 @@ MODELS: Tuple[str, ...] = (
     "instance_weighted",
     "aspic_v1_terminal",
     "aspic_v2",
-    "aspic_v2_window1",
+    "aspic_v2_persistent",
     "schema_gating",
 )
 CONDITIONS: Tuple[str, ...] = (
@@ -1886,7 +1886,7 @@ def infer_problem(
     for step in range(1, max_steps + 1):
         any_new = False
         working_props = set(best_committed.keys())
-        if model == "aspic_v2_window1":
+        if model == "aspic_v2_persistent":
             working_props.update(window1_active_transient.keys())
         pending_best: Dict[str, str] = {}
         window1_next_transient: Dict[str, str] = {}
@@ -1946,7 +1946,7 @@ def infer_problem(
                         consumed_transient = True
                         consumed_transient_source_ids.add(pending_pid)
                     if (
-                        model == "aspic_v2_window1"
+                        model == "aspic_v2_persistent"
                         and pending_pid is None
                         and window1_pid is not None
                     ):
@@ -1976,7 +1976,7 @@ def infer_problem(
                 )
                 nid = add_node(node)
 
-                blocked = model in ("aspic_v2", "aspic_v2_window1") and rel < tau
+                blocked = model in ("aspic_v2", "aspic_v2_persistent") and rel < tau
                 if blocked:
                     # Approximate chain-intercepting ASPIC+ behavior:
                     # the undercutter fires after schema selection/matching. We represent this
@@ -2006,10 +2006,10 @@ def infer_problem(
                     working_props.add(consequent_prop)
                     any_new = True
 
-        if model == "aspic_v2_window1":
+        if model == "aspic_v2_persistent":
             window1_active_transient = window1_next_transient
 
-        if not any_new and not (model == "aspic_v2_window1" and window1_active_transient):
+        if not any_new and not (model == "aspic_v2_persistent" and window1_active_transient):
             break
 
     q = normalize_prop(problem.question)
@@ -3086,7 +3086,7 @@ def build_report(
 ) -> str:
     seeds_n = len(cfg.get("seeds", [])) if isinstance(cfg.get("seeds"), list) else 0
     model_label = {
-        "aspic_v2_window1": "aspic_v2_persistent",
+        "aspic_v2_persistent": "aspic_v2_persistent",
     }
     base_conditions = ("random", "clustered")
 
@@ -3178,7 +3178,7 @@ def build_report(
             "- `Chain-Linked Error` is `incorrect_with_chain / incorrect` (diagnostic coverage metric)."
         )
         lines.append(
-            "- `aspic_v2_persistent` is the report label for `aspic_v2_window1`."
+            "- `aspic_v2_persistent` is the one-step persistent chain-intercepting variant."
         )
         lines.append(
             "- It keeps blocked transient nodes visible for one extra step; under redirect corruption this can approach instance-weighted behavior via cross-step consumption."
@@ -3452,7 +3452,7 @@ def build_report(
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run real schema-gating experiments.")
+    parser = argparse.ArgumentParser(description="Run paper reproduction experiments.")
     parser.add_argument("--config", default="configs/config_both_modes.json")
     parser.add_argument("--outdir", default="outputs")
     parser.add_argument(
@@ -3653,7 +3653,7 @@ def _model_display_name(model: str) -> str:
         "instance_weighted": "instance_weighted",
         "aspic_v1_terminal": "aspic_v1_terminal",
         "aspic_v2": "aspic_v2",
-        "aspic_v2_window1": "aspic_v2_persistent",
+        "aspic_v2_persistent": "aspic_v2_persistent",
         "schema_gating": "schema_gating",
     }
     return labels.get(model, model)
