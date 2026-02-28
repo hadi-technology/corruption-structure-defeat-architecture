@@ -2714,8 +2714,24 @@ def summarize_problems(problems: List[Problem]) -> Dict[str, object]:
     total_schemas = 0
     total_corrupted = 0
     schemas_by_depth: Dict[int, List[int]] = {}
+    answer_counts: Dict[str, int] = {"proved": 0, "disproved": 0}
+    preference_pairs_total = 0
+    problems_with_preferences = 0
+    preference_schema_ids: set[str] = set()
 
     for p in problems:
+        if int(p.answer) == 1:
+            answer_counts["proved"] += 1
+        else:
+            answer_counts["disproved"] += 1
+        pref_n = len(p.preference_pairs)
+        preference_pairs_total += pref_n
+        if pref_n > 0:
+            problems_with_preferences += 1
+            for hi_sid, lo_sid in p.preference_pairs:
+                preference_schema_ids.add(hi_sid)
+                preference_schema_ids.add(lo_sid)
+
         depth_key = str(p.depth)
         depth_hist[depth_key] = depth_hist.get(depth_key, 0) + 1
         schemas_by_depth.setdefault(p.depth, []).append(len(p.schemas))
@@ -2786,6 +2802,17 @@ def summarize_problems(problems: List[Problem]) -> Dict[str, object]:
         "family_ratios": family_ratios,
         "corrupted_family_counts": corrupted_family_counts,
         "corruption_rates_by_family": corruption_rates_by_family,
+        "label_counts": answer_counts,
+        "label_ratios": {
+            "proved": answer_counts["proved"] / max(1, len(problems)),
+            "disproved": answer_counts["disproved"] / max(1, len(problems)),
+        },
+        "preference_pairs_total": preference_pairs_total,
+        "preference_pairs_per_problem_mean": preference_pairs_total / max(1, len(problems)),
+        "problems_with_preferences": problems_with_preferences,
+        "problems_with_preferences_ratio": problems_with_preferences / max(1, len(problems)),
+        "schemas_in_preferences": len(preference_schema_ids),
+        "schemas_in_preferences_ratio": len(preference_schema_ids) / max(1, total_schemas),
     }
 
 
@@ -2864,12 +2891,12 @@ def compute_dataset_connectivity_analysis(dataset_results: Dict[str, object]) ->
         cond_rows = conditions.get(cond, {})
         if not isinstance(cond_rows, dict):
             continue
-        redirect_stats[cond] = {}
+        model_stats: Dict[str, Dict[str, float]] = {}
         for model in ("instance_weighted", "aspic_v1_terminal", "aspic_v2", "schema_gating"):
             row = cond_rows.get(model, {})
-            if not isinstance(row, dict):
+            if not isinstance(row, dict) or not row:
                 continue
-            redirect_stats[cond][model] = {
+            model_stats[model] = {
                 "chain_error_mean": float(row.get("chain_error_mean", 0.0)),
                 "chain_error_std": float(row.get("chain_error_std", 0.0)),
                 "cascade_mean": float(row.get("cascade_mean", 0.0)),
@@ -2877,6 +2904,8 @@ def compute_dataset_connectivity_analysis(dataset_results: Dict[str, object]) ->
                 "accuracy_mean": float(row.get("accuracy_mean", 0.0)),
                 "accuracy_std": float(row.get("accuracy_std", 0.0)),
             }
+        if model_stats:
+            redirect_stats[cond] = model_stats
 
     gaps: Dict[str, Dict[str, float]] = {}
     for cond, model_rows in redirect_stats.items():
@@ -2921,6 +2950,10 @@ def quality_flags_for_summary(summary: Dict[str, object]) -> List[str]:
             flags.append("family_distribution_degenerate_implication_dominant")
         if dfl <= 0.05:
             flags.append("family_distribution_default_too_rare")
+
+    pref_ratio = float(summary.get("problems_with_preferences_ratio", 0.0))
+    if pref_ratio <= 0.10:
+        flags.append("low_preference_coverage")
 
     return flags
 
@@ -3144,6 +3177,8 @@ def run_degraded_ablation(
     eval_conditions = [str(c) for c in eval_conditions if str(c) in datasets_by_condition]
     if not eval_conditions:
         eval_conditions = [c for c in ("clustered_negate", "clustered_redirect") if c in datasets_by_condition]
+    if not eval_conditions:
+        eval_conditions = [str(c) for c in datasets_by_condition.keys()]
 
     valid_metrics = {"cascade_rate", "chain_error_rate"}
     if target_model not in MODELS:
@@ -3407,6 +3442,20 @@ def format_pct(x: float) -> str:
     return f"{x * 100:.2f}%"
 
 
+def ordered_present_conditions(conditions: Dict[str, object]) -> List[str]:
+    ordered: List[str] = []
+    for cond in CONDITIONS:
+        rows = conditions.get(cond)
+        if isinstance(rows, dict):
+            ordered.append(cond)
+    for cond, rows in conditions.items():
+        if cond in ordered:
+            continue
+        if isinstance(rows, dict):
+            ordered.append(str(cond))
+    return ordered
+
+
 def build_report(
     hardware: Dict[str, object],
     ruletaker: Dict[str, object],
@@ -3450,6 +3499,7 @@ def build_report(
         conditions = dataset_results.get("conditions", {})
         if not isinstance(conditions, dict):
             return
+        present_conditions = ordered_present_conditions(conditions)
 
         per_seed_n = int(cfg.get(dataset_key, {}).get("num_problems", 0))
         total_eval = max(1, seeds_n * per_seed_n)
@@ -3516,6 +3566,7 @@ def build_report(
         lines.append(
             "- It keeps blocked transient nodes visible for one extra step; under redirect corruption this can approach instance-weighted behavior via cross-step consumption."
         )
+        lines.append("- Tables include only conditions that were actually executed in this run.")
         lines.append("")
 
         lines.append(f"## {title} Mechanism Checks")
@@ -3534,7 +3585,7 @@ def build_report(
         lines.append(
             f"- Low-confidence fallback decision rates (policy=`{default_policy}`):"
         )
-        for cond in CONDITIONS:
+        for cond in present_conditions:
             cond_rows = conditions.get(cond, {})
             if not isinstance(cond_rows, dict):
                 continue
@@ -3547,7 +3598,7 @@ def build_report(
                     f"  - `{cond}/{model_label.get(model, model)}`: `{format_pct(default_rate)}`"
                 )
         lines.append("- ASPIC+ transient propagation window usage:")
-        for cond in CONDITIONS:
+        for cond in present_conditions:
             cond_rows = conditions.get(cond, {})
             if not isinstance(cond_rows, dict):
                 continue
@@ -3568,7 +3619,7 @@ def build_report(
         lines.append(f"## {title} Error Decomposition")
         lines.append("| Condition | Model | CWA Error | Chain-Linked Error | Direct Error |")
         lines.append("|---|---|---:|---:|---:|")
-        for cond in CONDITIONS:
+        for cond in present_conditions:
             cond_rows = conditions.get(cond, {})
             if not isinstance(cond_rows, dict):
                 continue
@@ -3589,7 +3640,7 @@ def build_report(
             "| Condition | Model | Derivable Coverage | Derivable Accuracy | Derivable Chain-Linked Error |"
         )
         lines.append("|---|---|---:|---:|---:|")
-        for cond in CONDITIONS:
+        for cond in present_conditions:
             cond_rows = conditions.get(cond, {})
             if not isinstance(cond_rows, dict):
                 continue
@@ -3604,6 +3655,37 @@ def build_report(
                     f"{float(row.get('derivable_chain_linked_mean', 0.0)):.3f} ± {float(row.get('derivable_chain_linked_std', 0.0)):.3f} |"
                 )
         lines.append("")
+
+        # Validity guardrails for interpretation.
+        clean_rows = conditions.get("clean", {})
+        if isinstance(clean_rows, dict) and clean_rows:
+            lines.append(f"## {title} Validity Checks")
+            lines.append("| Model | Default decision rate | Derivable coverage |")
+            lines.append("|---|---:|---:|")
+            for model in MODELS:
+                row = clean_rows.get(model, {})
+                if not isinstance(row, dict):
+                    continue
+                default_rate = float(row.get("default_decision_total_sum", 0.0)) / total_eval
+                deriv_cov = float(row.get("derivable_total_sum", 0.0)) / total_eval
+                lines.append(
+                    f"| {model_label.get(model, model)} | {default_rate:.3f} | {deriv_cov:.3f} |"
+                )
+            lines.append("")
+
+            iw_row = clean_rows.get("instance_weighted", {})
+            if isinstance(iw_row, dict):
+                iw_default_rate = float(iw_row.get("default_decision_total_sum", 0.0)) / total_eval
+                iw_derivable_cov = float(iw_row.get("derivable_total_sum", 0.0)) / total_eval
+                if iw_default_rate >= 0.90 or iw_derivable_cov <= 0.10:
+                    lines.append(
+                        f"- Interpretation warning: `{title}` clean evaluation is fallback-dominated "
+                        f"(IW default rate={iw_default_rate:.3f}, IW derivable coverage={iw_derivable_cov:.3f})."
+                    )
+                    lines.append(
+                        "- Treat architectural differences as directional unless coverage is improved."
+                    )
+                    lines.append("")
 
     if ruletaker and isinstance(ruletaker, dict) and isinstance(ruletaker.get("conditions"), dict):
         append_dataset_section("RuleTaker", "ruletaker", ruletaker)
@@ -3633,16 +3715,22 @@ def build_report(
         )
         lines.append("|---|---:|---:|---:|")
         for dataset_name, ca in connectivity_rows:
-            clustered_gap = float(
-                ca.get("redirect_gaps", {})
-                .get("clustered_redirect", {})
-                .get("iw_minus_gating", 0.0)
+            redirect_gaps = ca.get("redirect_gaps", {})
+            clustered_gap_obj: object = None
+            if isinstance(redirect_gaps, dict):
+                clustered_obj = redirect_gaps.get("clustered_redirect", {})
+                if isinstance(clustered_obj, dict) and "iw_minus_gating" in clustered_obj:
+                    clustered_gap_obj = clustered_obj["iw_minus_gating"]
+            gap_text = (
+                f"{float(clustered_gap_obj):.3f}"
+                if isinstance(clustered_gap_obj, (int, float))
+                else "n/a"
             )
             lines.append(
                 f"| {dataset_name} | "
                 f"{float(ca.get('redirect_exposure_mean', 0.0)):.3f} ± {float(ca.get('redirect_exposure_std', 0.0)):.3f} | "
                 f"{float(ca.get('redirect_exposure_ratio_mean', 0.0)):.3f} ± {float(ca.get('redirect_exposure_ratio_std', 0.0)):.3f} | "
-                f"{clustered_gap:.3f} |"
+                f"{gap_text} |"
             )
         lines.append("")
 
