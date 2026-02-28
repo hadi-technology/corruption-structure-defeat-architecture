@@ -28,6 +28,20 @@ Run exactly:
 
 This regenerates the canonical paper artifacts under `results/`.
 
+## BoardgameQA (Defeasibility Extension)
+
+BoardgameQA support is implemented as an optional config-driven run (separate from the paper reproduction command):
+
+```bash
+python run_experiments.py --config configs/config_boardgameqa.json --outdir outputs_boardgameqa
+```
+
+This run:
+- uses depth-2/3 instances
+- filters to `proved` / `disproved`
+- parses tuple-structured facts/rules from `theory`
+- applies rule preferences to defeat timing (`IW`, `V1`, `V2`, `Gating`)
+
 ## How The Script Works
 
 `./scripts/reproduce.sh` runs the full paper pipeline in this order:

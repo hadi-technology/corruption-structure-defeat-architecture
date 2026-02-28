@@ -138,6 +138,7 @@ class Problem:
     answer: int
     facts: Tuple[str, ...]
     schemas: List[Schema]
+    preference_pairs: List[Tuple[str, str]] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
@@ -178,6 +179,7 @@ class DerivationNode:
     clarity: float
     confidence: float
     corrupted: bool
+    defeated_by_preference: bool
     step: int
     committed: bool
 
@@ -819,6 +821,199 @@ def load_any_split(dataset_name: str, config_name: Optional[str], split_pref: Se
     raise RuntimeError("Unsupported dataset object from load_dataset.")
 
 
+def _bgqa_norm_token(text: str) -> str:
+    return normalize_text(text).replace(" ", "_")
+
+
+def parse_boardgame_tuple_atom(text: str) -> str:
+    raw = text.strip()
+    if not raw:
+        return ""
+    neg = False
+    if raw.startswith("~"):
+        neg = True
+        raw = raw[1:].strip()
+    if raw.startswith("(") and raw.endswith(")"):
+        raw = raw[1:-1].strip()
+    parts = [p.strip() for p in raw.split(",", 2)]
+    if len(parts) != 3:
+        return ""
+    subj = _bgqa_norm_token(parts[0])
+    pred = _bgqa_norm_token(parts[1])
+    obj = _bgqa_norm_token(parts[2])
+    if not subj or not pred or not obj:
+        return ""
+    base = f"r|{subj}|{pred}|{obj}"
+    return f"not|{base}" if neg else base
+
+
+def parse_boardgame_rule_expr(expr: str) -> List[str]:
+    expr = expr.strip()
+    expr = re.sub(r"^exists\s+[A-Za-z]+\s+", "", expr, flags=re.I).strip()
+    expr = re.sub(r"^forall\s+[A-Za-z]+\s+", "", expr, flags=re.I).strip()
+    out: List[str] = []
+    for part in expr.split("^"):
+        atom = parse_boardgame_tuple_atom(part.strip())
+        if atom:
+            out.append(atom)
+    return out
+
+
+def parse_boardgame_preferences(raw_preferences: str) -> List[Tuple[str, str]]:
+    out: List[Tuple[str, str]] = []
+    for m in re.finditer(
+        r"Rule\s*([0-9]+)\s*(?:is preferred over|>)\s*Rule\s*([0-9]+)",
+        raw_preferences,
+        flags=re.I,
+    ):
+        out.append((f"Rule{int(m.group(1))}", f"Rule{int(m.group(2))}"))
+    return out
+
+
+def parse_boardgame_instance(
+    row: Dict[str, object],
+    dataset_key_prefix: str,
+) -> Optional[Problem]:
+    label_raw = normalize_text(str(row.get("label", "")))
+    if label_raw not in {"proved", "disproved"}:
+        return None
+    answer = 1 if label_raw == "proved" else 0
+
+    config_raw = normalize_text(str(row.get("config", "")))
+    m_depth = re.search(r"depth\s*([0-9]+)", config_raw)
+    if not m_depth:
+        return None
+    depth = int(m_depth.group(1))
+    if depth not in (2, 3):
+        return None
+
+    goal_raw = str(row.get("goal", "")).strip()
+    question = parse_boardgame_tuple_atom(goal_raw)
+    if not question:
+        return None
+
+    theory = str(row.get("theory", ""))
+    facts: List[str] = []
+    schemas: List[Schema] = []
+    rule_name_to_schema_id: Dict[str, str] = {}
+
+    in_facts = False
+    in_rules = False
+    for line in theory.splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        low = normalize_text(s)
+        if low.startswith("facts:"):
+            in_facts = True
+            in_rules = False
+            continue
+        if low.startswith("rules:"):
+            in_facts = False
+            in_rules = True
+            continue
+        if low.startswith("preferences:"):
+            in_facts = False
+            in_rules = False
+            continue
+
+        if in_facts:
+            atom = parse_boardgame_tuple_atom(s)
+            if atom:
+                facts.append(atom)
+            continue
+
+        if in_rules:
+            m = re.match(r"^(Rule[0-9]+)\s*:\s*(.+?)\s*=>\s*(.+)$", s, flags=re.I)
+            if not m:
+                continue
+            rule_name = m.group(1).strip()
+            ant_expr = m.group(2).strip()
+            cons_expr = m.group(3).strip()
+            ants = tuple(parse_boardgame_rule_expr(ant_expr))
+            cons = parse_boardgame_tuple_atom(cons_expr)
+            if not ants or not cons:
+                continue
+            family = "TRANSITIVE" if len(ants) >= 2 else "IMPLICATION"
+            schema_id = f"{dataset_key_prefix}_{rule_name}"
+            schema = Schema(
+                schema_id=schema_id,
+                text=s,
+                antecedents=ants,
+                consequent=cons,
+                family=family,
+                source_id=f"bgqa_{rule_name.lower()}",
+                corrupted=False,
+            )
+            schemas.append(schema)
+            rule_name_to_schema_id[rule_name] = schema_id
+
+    if not facts or not schemas:
+        return None
+
+    pref_text = str(row.get("preferences", "")) + "\n" + theory
+    pref_pairs_named = parse_boardgame_preferences(pref_text)
+    pref_pairs: List[Tuple[str, str]] = []
+    for hi_name, lo_name in pref_pairs_named:
+        hi_sid = rule_name_to_schema_id.get(hi_name)
+        lo_sid = rule_name_to_schema_id.get(lo_name)
+        if hi_sid and lo_sid:
+            pref_pairs.append((hi_sid, lo_sid))
+
+    return Problem(
+        problem_id=dataset_key_prefix,
+        depth=depth,
+        question=question,
+        answer=answer,
+        facts=tuple(sorted(set(facts))),
+        schemas=schemas,
+        preference_pairs=pref_pairs,
+    )
+
+
+def load_boardgameqa_problems(cfg: Dict[str, object], dataset_key: str) -> List[Problem]:
+    if dataset_key not in cfg:
+        raise KeyError(f"Missing dataset config block: `{dataset_key}`")
+    bg_cfg = cfg[dataset_key]
+    if not isinstance(bg_cfg, dict):
+        raise ValueError("`boardgameqa` config block must be an object.")
+    target_total = int(bg_cfg.get("num_problems", 500))
+    sample_seed = int(bg_cfg.get("sample_seed", 1337))
+    dataset_name = str(bg_cfg.get("dataset_name", "tasksource/Boardgame-QA"))
+    split_pref = [str(s) for s in bg_cfg.get("split_preference", ["train", "valid", "test"])]
+    max_rules_per_problem = int(bg_cfg.get("max_rules_per_problem", 80))
+
+    if not DATASETS_AVAILABLE:
+        raise RuntimeError("datasets package is required to load BoardgameQA.")
+
+    dset = load_any_split(dataset_name, config_name=None, split_pref=split_pref)
+    rows: Iterable[Dict[str, object]]
+    if isinstance(dset, Dataset):
+        rows = dset  # type: ignore[assignment]
+    else:
+        rows = []
+
+    parsed: List[Problem] = []
+    for idx, row in enumerate(rows):
+        if not isinstance(row, dict):
+            continue
+        pid = f"bgqa_row{idx:06d}"
+        p = parse_boardgame_instance(row, pid)
+        if p is None:
+            continue
+        if len(p.schemas) > max_rules_per_problem:
+            p.schemas = p.schemas[:max_rules_per_problem]
+        parsed.append(p)
+
+    if len(parsed) < target_total:
+        raise RuntimeError(f"BoardgameQA parsed {len(parsed)} usable problems, need {target_total}.")
+
+    rng = random.Random(sample_seed)
+    sampled = rng.sample(parsed, target_total)
+    rng.shuffle(sampled)
+    return sampled
+
+
 def flatten_ruletaker_rows(
     rows: Iterable[Dict[str, object]],
     depth: int,
@@ -1198,6 +1393,8 @@ def apply_problem_selection_filter(
 
 
 def load_problems_base(cfg: Dict[str, object], dataset_key: str) -> List[Problem]:
+    if dataset_key == "boardgameqa":
+        return load_boardgameqa_problems(cfg, dataset_key=dataset_key)
     if dataset_key not in cfg:
         raise KeyError(f"Missing dataset config block: `{dataset_key}`")
     rt_cfg = cfg[dataset_key]
@@ -1809,6 +2006,34 @@ def better(new_node: DerivationNode, old_node: DerivationNode) -> bool:
     return node_rank(new_node) > node_rank(old_node)
 
 
+def build_preference_closure(problem: Problem) -> Dict[str, set[str]]:
+    direct: Dict[str, set[str]] = {}
+    for hi, lo in problem.preference_pairs:
+        direct.setdefault(hi, set()).add(lo)
+    closure: Dict[str, set[str]] = {}
+    for src in direct.keys():
+        seen: set[str] = set()
+        stack = list(direct.get(src, set()))
+        while stack:
+            cur = stack.pop()
+            if cur in seen:
+                continue
+            seen.add(cur)
+            stack.extend(direct.get(cur, set()))
+        closure[src] = seen
+    return closure
+
+
+def schema_base_id(rule_id: Optional[str]) -> Optional[str]:
+    if rule_id is None:
+        return None
+    return str(rule_id).split("@", 1)[0]
+
+
+def propositions_conflict(a: str, b: str) -> bool:
+    return a == negate_prop(b) or b == negate_prop(a)
+
+
 def infer_problem(
     problem: Problem,
     estimator: EstimatorModel,
@@ -1821,12 +2046,15 @@ def infer_problem(
     breadth_limit = int(reason_cfg["breadth_limit"])
     decision_conf_thr = float(reason_cfg.get("decision_confidence_threshold", 0.5))
     default_policy = str(reason_cfg.get("default_policy", "closed_world"))
+    use_preferences = bool(reason_cfg.get("use_preferences", False))
     tau = float(estimator.threshold)
 
     rng = random.Random(deterministic_seed("infer", seed, model, problem.problem_id))
 
     nodes: Dict[str, DerivationNode] = {}
     best_committed: Dict[str, str] = {}
+    preference_closure = build_preference_closure(problem) if use_preferences else {}
+    schema_by_id: Dict[str, Schema] = {s.schema_id: s for s in problem.schemas}
     node_counter = 0
 
     def add_node(node: DerivationNode) -> str:
@@ -1853,6 +2081,7 @@ def infer_problem(
             clarity=1.0,
             confidence=1.0,
             corrupted=False,
+            defeated_by_preference=False,
             step=0,
             committed=True,
         )
@@ -1869,7 +2098,19 @@ def infer_problem(
 
     if model == "schema_gating":
         gated = []
+        pref_removed: set[str] = set()
+        if use_preferences:
+            for high_sid, low_sid in problem.preference_pairs:
+                hs = schema_by_id.get(high_sid)
+                ls = schema_by_id.get(low_sid)
+                if hs is None or ls is None:
+                    continue
+                if propositions_conflict(hs.consequent, ls.consequent):
+                    pref_removed.add(low_sid)
         for schema in active_rules:
+            if schema.schema_id in pref_removed:
+                removed_schema_ids.append(schema.schema_id)
+                continue
             score = estimator.score(schema)
             if score < tau:
                 removed_schema_ids.append(schema.schema_id)
@@ -1960,6 +2201,15 @@ def infer_problem(
                 rel = estimator.score(schema)
                 conf = parent_conf * rel
                 rule_instance_id = schema.schema_id if not binding else f"{schema.schema_id}@{binding}"
+                defeated_by_preference = False
+                if use_preferences:
+                    conflict_prop = negate_prop(consequent_prop)
+                    conflict_nid = best_committed.get(conflict_prop)
+                    if conflict_nid is not None:
+                        conflict_node = nodes.get(conflict_nid)
+                        conflict_sid = schema_base_id(conflict_node.rule_id) if conflict_node else None
+                        if conflict_sid and schema.schema_id in preference_closure.get(conflict_sid, set()):
+                            defeated_by_preference = True
                 node = DerivationNode(
                     node_id="",
                     proposition=consequent_prop,
@@ -1971,12 +2221,15 @@ def infer_problem(
                     clarity=clarity_value(schema.family),
                     confidence=conf,
                     corrupted=schema.corrupted,
+                    defeated_by_preference=defeated_by_preference,
                     step=step,
                     committed=True,
                 )
                 nid = add_node(node)
 
-                blocked = model in ("aspic_v2", "aspic_v2_persistent") and rel < tau
+                blocked = model in ("aspic_v2", "aspic_v2_persistent") and (
+                    rel < tau or (use_preferences and defeated_by_preference)
+                )
                 if blocked:
                     # Approximate chain-intercepting ASPIC+ behavior:
                     # the undercutter fires after schema selection/matching. We represent this
@@ -2043,6 +2296,29 @@ def infer_problem(
                     stack.append(pid)
         return False
 
+    def has_preference_defeated_intermediate_local(root_node_id: Optional[str]) -> bool:
+        if root_node_id is None or not use_preferences:
+            return False
+        root = nodes.get(root_node_id)
+        if root is None:
+            return False
+        stack = list(root.parent_ids)
+        seen: set[str] = set()
+        while stack:
+            nid = stack.pop()
+            if nid in seen:
+                continue
+            seen.add(nid)
+            node = nodes.get(nid)
+            if node is None:
+                continue
+            if node.rule_id is not None and node.defeated_by_preference:
+                return True
+            for pid in node.parent_ids:
+                if pid not in seen:
+                    stack.append(pid)
+        return False
+
     def visible_best(prop: str, blocked_ids: set[str]) -> Optional[str]:
         nid = best_committed.get(prop)
         if nid in blocked_ids:
@@ -2091,7 +2367,10 @@ def infer_problem(
             break
         if pred_node is None:
             break
-        if not has_corrupted_intermediate_local(pred_node):
+        bad = has_corrupted_intermediate_local(pred_node)
+        if use_preferences:
+            bad = bad or has_preference_defeated_intermediate_local(pred_node)
+        if not bad:
             break
         blocked_node_ids.add(pred_node)
         # Prevent pathological cycles if both sides repeatedly fail and no
@@ -2134,6 +2413,33 @@ def has_corrupted_intermediate(
         if node is None:
             continue
         if node.rule_id is not None and node.corrupted:
+            return True
+        for pid in node.parent_ids:
+            if pid not in seen:
+                stack.append(pid)
+    return False
+
+
+def has_preference_defeated_intermediate(
+    result: InferenceResult,
+    root_node_id: Optional[str],
+) -> bool:
+    if root_node_id is None:
+        return False
+    root = result.nodes.get(root_node_id)
+    if root is None:
+        return False
+    stack = list(root.parent_ids)  # exclude final node
+    seen: set[str] = set()
+    while stack:
+        nid = stack.pop()
+        if nid in seen:
+            continue
+        seen.add(nid)
+        node = result.nodes.get(nid)
+        if node is None:
+            continue
+        if node.rule_id is not None and node.defeated_by_preference:
             return True
         for pid in node.parent_ids:
             if pid not in seen:
@@ -2189,6 +2495,7 @@ def evaluate_model_on_condition(
     cfg: Dict[str, object],
     seed: int,
     reliable_sources: Dict[str, float],
+    chain_error_mode: str = "corruption",
 ) -> Dict[str, object]:
     total = len(problems)
     correct = 0
@@ -2254,9 +2561,13 @@ def evaluate_model_on_condition(
                         errors_direct += 1
                         if is_derivable:
                             derivable_errors_direct += 1
-                has_corrupt = any(s.corrupted for s in p.schemas)
-                if has_corrupted_intermediate(res, res.predicted_node_id, has_corrupt):
-                    corrupted_chain += 1
+                if chain_error_mode == "preference":
+                    if has_preference_defeated_intermediate(res, res.predicted_node_id):
+                        corrupted_chain += 1
+                else:
+                    has_corrupt = any(s.corrupted for s in p.schemas)
+                    if has_corrupted_intermediate(res, res.predicted_node_id, has_corrupt):
+                        corrupted_chain += 1
 
         if model == "schema_gating":
             removed_set = set(res.removed_schema_ids)
@@ -2712,19 +3023,25 @@ def run_dataset_experiments(
         run_cfg["reasoner"] = reason_cfg
 
     base = load_problems_base(run_cfg, dataset_key=dataset_key)
+    boardgame_mode = dataset_key == "boardgameqa"
+    eval_conditions: Tuple[str, ...] = ("clean",) if boardgame_mode else CONDITIONS
+    chain_error_mode = "preference" if boardgame_mode else "corruption"
 
     # Build per-condition/seed datasets from same base sample.
-    datasets: Dict[str, Dict[int, List[Problem]]] = {cond: {} for cond in CONDITIONS}
-    for cond in CONDITIONS:
+    datasets: Dict[str, Dict[int, List[Problem]]] = {cond: {} for cond in eval_conditions}
+    for cond in eval_conditions:
         for seed in seeds:
-            datasets[cond][seed] = apply_noise(base, cond, seed, run_cfg)
+            if boardgame_mode:
+                datasets[cond][seed] = copy.deepcopy(base)
+            else:
+                datasets[cond][seed] = apply_noise(base, cond, seed, run_cfg)
 
     per_condition: Dict[str, object] = {}
     clean_fnr_vals: List[float] = []
     clustered_reduction_vals: List[float] = []
-    estimator_metrics: Dict[str, Dict[int, Dict[str, float]]] = {cond: {} for cond in CONDITIONS}
+    estimator_metrics: Dict[str, Dict[int, Dict[str, float]]] = {cond: {} for cond in eval_conditions}
 
-    for cond in CONDITIONS:
+    for cond in eval_conditions:
         per_model_rows: Dict[str, List[Dict[str, object]]] = {m: [] for m in MODELS}
 
         for seed in seeds:
@@ -2748,6 +3065,7 @@ def run_dataset_experiments(
                     cfg=run_cfg,
                     seed=seed,
                     reliable_sources=reliable_sources,
+                    chain_error_mode=chain_error_mode,
                 )
                 per_model_rows[model].append(row)
 
@@ -2790,6 +3108,20 @@ def run_proofwriter_experiments(cfg: Dict[str, object]) -> Dict[str, object]:
         dataset_key="proofwriter",
         default_policy_override=default_policy,
     )
+
+
+def run_boardgameqa_experiments(cfg: Dict[str, object]) -> Dict[str, object]:
+    bg_cfg = cfg.get("boardgameqa", {})
+    if not isinstance(bg_cfg, dict):
+        raise ValueError("`boardgameqa` config block must be an object.")
+    default_policy = str(bg_cfg.get("default_policy", "closed_world"))
+    out = run_dataset_experiments(
+        cfg,
+        dataset_key="boardgameqa",
+        default_policy_override=default_policy,
+    )
+    out["chain_error_mode"] = "preference"
+    return out
 
 
 def run_degraded_ablation(
@@ -3082,6 +3414,7 @@ def build_report(
     cfg: Dict[str, object],
     synthetic_redirect: Optional[Dict[str, object]] = None,
     proofwriter: Optional[Dict[str, object]] = None,
+    boardgameqa: Optional[Dict[str, object]] = None,
     ablation_dataset_key: Optional[str] = None,
 ) -> str:
     seeds_n = len(cfg.get("seeds", [])) if isinstance(cfg.get("seeds"), list) else 0
@@ -3276,6 +3609,8 @@ def build_report(
         append_dataset_section("RuleTaker", "ruletaker", ruletaker)
     if proofwriter and isinstance(proofwriter, dict):
         append_dataset_section("ProofWriter", "proofwriter", proofwriter)
+    if boardgameqa and isinstance(boardgameqa, dict):
+        append_dataset_section("BoardgameQA", "boardgameqa", boardgameqa)
 
     connectivity_rows: List[Tuple[str, Dict[str, object]]] = []
     if ruletaker and isinstance(ruletaker, dict):
@@ -3286,6 +3621,10 @@ def build_report(
         ca = proofwriter.get("connectivity_analysis", {})
         if isinstance(ca, dict):
             connectivity_rows.append(("ProofWriter", ca))
+    if boardgameqa and isinstance(boardgameqa, dict):
+        ca = boardgameqa.get("connectivity_analysis", {})
+        if isinstance(ca, dict):
+            connectivity_rows.append(("BoardgameQA", ca))
 
     if connectivity_rows:
         lines.append("## Redirect Exposure Analysis")
@@ -3565,10 +3904,8 @@ def _assert_paper_locked_args(
     """Enforce canonical paper settings for direct CLI invocation."""
     cfg = Path(args.config).as_posix()
     if cfg != PAPER_CONFIG_PATH.as_posix():
-        raise ValueError(
-            "Paper-locked mode requires --config configs/config_both_modes.json "
-            "(recommended: use ./scripts/reproduce.sh)."
-        )
+        # Non-paper configs are allowed for additional experiments.
+        return
     if args.max_problems is not None:
         raise ValueError("Paper-locked mode forbids --max-problems.")
     if args.smoke_test:
@@ -3973,8 +4310,14 @@ def main() -> int:
     if isinstance(cfg.get("proofwriter"), dict):
         print("Running ProofWriter experiments...")
         proofwriter = run_proofwriter_experiments(cfg)
-    if ruletaker is None and proofwriter is None:
-        raise ValueError("Config must define at least one dataset block: `ruletaker` or `proofwriter`.")
+    boardgameqa: Optional[Dict[str, object]] = None
+    if isinstance(cfg.get("boardgameqa"), dict):
+        print("Running BoardgameQA experiments...")
+        boardgameqa = run_boardgameqa_experiments(cfg)
+    if ruletaker is None and proofwriter is None and boardgameqa is None:
+        raise ValueError(
+            "Config must define at least one dataset block: `ruletaker`, `proofwriter`, or `boardgameqa`."
+        )
 
     # Save parsed/noisy dataset metadata for review and reproducibility.
     dataset_meta: Dict[str, object] = {}
@@ -3983,6 +4326,8 @@ def main() -> int:
         dataset_runs["ruletaker"] = ruletaker
     if proofwriter is not None:
         dataset_runs["proofwriter"] = proofwriter
+    if boardgameqa is not None:
+        dataset_runs["boardgameqa"] = boardgameqa
 
     for dataset_name in list(dataset_runs.keys()):
         dataset_runs[dataset_name]["connectivity_analysis"] = compute_dataset_connectivity_analysis(
@@ -4048,6 +4393,9 @@ def main() -> int:
     proofwriter_no_data: Optional[Dict[str, object]] = None
     if proofwriter is not None:
         proofwriter_no_data = {k: v for k, v in proofwriter.items() if k != "datasets"}
+    boardgameqa_no_data: Optional[Dict[str, object]] = None
+    if boardgameqa is not None:
+        boardgameqa_no_data = {k: v for k, v in boardgameqa.items() if k != "datasets"}
     results = {
         "hardware": hardware,
         "ablation": ablation,
@@ -4059,11 +4407,17 @@ def main() -> int:
         results["ruletaker"] = ruletaker_no_data
     if proofwriter_no_data is not None:
         results["proofwriter"] = proofwriter_no_data
+    if boardgameqa_no_data is not None:
+        results["boardgameqa"] = boardgameqa_no_data
     connectivity_analysis: Dict[str, object] = {}
     if ruletaker_no_data is not None and isinstance(ruletaker_no_data.get("connectivity_analysis"), dict):
         connectivity_analysis["ruletaker"] = ruletaker_no_data["connectivity_analysis"]
     if proofwriter_no_data is not None and isinstance(proofwriter_no_data.get("connectivity_analysis"), dict):
         connectivity_analysis["proofwriter"] = proofwriter_no_data["connectivity_analysis"]
+    if boardgameqa_no_data is not None and isinstance(
+        boardgameqa_no_data.get("connectivity_analysis"), dict
+    ):
+        connectivity_analysis["boardgameqa"] = boardgameqa_no_data["connectivity_analysis"]
     results["connectivity_analysis"] = connectivity_analysis
     save_json(outdir / "results.json", results)
 
@@ -4074,6 +4428,7 @@ def main() -> int:
         cfg=cfg,
         synthetic_redirect=synthetic_redirect,
         proofwriter=proofwriter_no_data,
+        boardgameqa=boardgameqa_no_data,
         ablation_dataset_key=ablation_dataset_key,
     )
     with open(outdir / "report.md", "w", encoding="utf-8") as handle:

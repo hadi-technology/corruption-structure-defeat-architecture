@@ -1,0 +1,39 @@
+{
+  "seeds": [42, 123, 456],
+  "boardgameqa": {
+    "dataset_name": "tasksource/Boardgame-QA",
+    "num_problems": 300,
+    "sample_seed": 1337,
+    "split_preference": ["train", "valid", "test"],
+    "max_rules_per_problem": 80,
+    "default_policy": "closed_world"
+  },
+  "noise": {
+    "random_rate": 0.2,
+    "clustered_rate": 0.6,
+    "clustered_family": "TRANSITIVE"
+  },
+  "estimator": {
+    "backend": "count_fallback",
+    "threshold": 0.5,
+    "label_noise_rates": [0.0, 0.1, 0.2, 0.3]
+  },
+  "reasoner": {
+    "max_steps": 7,
+    "breadth_limit": 80,
+    "decision_confidence_threshold": 0.05,
+    "default_policy": "closed_world",
+    "use_preferences": true
+  },
+  "synthetic_redirect": {
+    "enabled": false,
+    "n_problems": 60,
+    "chain_lengths": [3, 4, 5]
+  },
+  "ablation": {
+    "target_model": "schema_gating",
+    "reference_model": "instance_weighted",
+    "metric": "chain_error_rate",
+    "conditions": ["clean"]
+  }
+}
