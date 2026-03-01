@@ -70,7 +70,7 @@
     ]
   },
   "neural_selector": {
-    "enabled": false,
+    "enabled": true,
     "corruption_rate": 0.3,
     "top_k": 8,
     "sample_strategy": "similarity_weighted"
@@ -82,7 +82,7 @@
     "default_policy": "closed_world"
   },
   "synthetic_redirect": {
-    "enabled": true,
+    "enabled": false,
     "n_problems": 60,
     "chain_lengths": [
       3,
@@ -96,7 +96,8 @@
     "metric": "chain_error_rate",
     "conditions": [
       "clustered_negate",
-      "clustered_redirect"
+      "clustered_redirect",
+      "neural"
     ]
   }
 }

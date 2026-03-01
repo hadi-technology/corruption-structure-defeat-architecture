@@ -42,6 +42,16 @@ This run:
 - parses tuple-structured facts/rules from `theory`
 - applies rule preferences to defeat timing (`IW`, `V1`, `V2`, `Gating`)
 
+## Neural Selector (Optional Extension)
+
+The paper reproduction command remains unchanged. For optional neural-style corruption runs, enable the `neural_selector` block and run:
+
+```bash
+python run_experiments.py --config configs/config_neural.json --outdir outputs_neural
+```
+
+This neural condition uses frozen DistilBERT embeddings of consequents, then replaces consequents by sampling from top-k nearest neighbors (similarity-weighted by default). The corruption rate is controlled by `neural_selector.corruption_rate`. Diagnostics (`in_vant_fraction`, `out_vant_fraction`, applied rate, replacement similarity) are written to `results.json` and `report.md`.
+
 ## How The Script Works
 
 `./scripts/reproduce.sh` runs the full paper pipeline in this order:

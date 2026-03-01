@@ -81,6 +81,7 @@ CONDITIONS: Tuple[str, ...] = (
     "clustered_negate",
     "random_redirect",
     "clustered_redirect",
+    "neural",
 )
 PAPER_CONFIG_PATH = Path("configs/config_both_modes.json")
 PAPER_MAIN_OUTDIR = "outputs_main"
@@ -310,6 +311,23 @@ def normalize_prop(text: str) -> str:
             return atom
 
     return text
+
+
+def prop_to_text(prop: str) -> str:
+    core = prop[4:] if prop.startswith("not|") else prop
+    negated = prop.startswith("not|")
+    parts = core.split("|")
+    if parts and parts[0] == "u" and len(parts) == 3:
+        subj, pred = parts[1], parts[2]
+        if negated:
+            return f"{subj} is not {pred}"
+        return f"{subj} is {pred}"
+    if parts and parts[0] == "r" and len(parts) == 4:
+        subj, verb, obj = parts[1], parts[2], parts[3]
+        if negated:
+            return f"{subj} does not {verb} {obj}"
+        return f"{subj} {verb} {obj}"
+    return prop.replace("|", " ")
 
 
 def negate_prop(prop: str) -> str:
@@ -1642,6 +1660,20 @@ def build_schema_records(problems: List[Problem]) -> List[SchemaRecord]:
     return records
 
 
+def build_consequent_vocabulary(problems: List[Problem]) -> Tuple[Dict[str, int], Dict[int, str]]:
+    all_consequents: set[str] = set()
+    for problem in problems:
+        for schema in problem.schemas:
+            c = normalize_prop(schema.consequent)
+            if c:
+                all_consequents.add(c)
+
+    sorted_cons = sorted(all_consequents)
+    cons2idx = {c: i for i, c in enumerate(sorted_cons)}
+    idx2cons = {i: c for c, i in cons2idx.items()}
+    return cons2idx, idx2cons
+
+
 def split_records(
     records: List[SchemaRecord], seed: int
 ) -> Tuple[List[SchemaRecord], List[SchemaRecord], List[SchemaRecord]]:
@@ -1939,6 +1971,193 @@ def train_distilbert_frozen_head_estimator(
         global_score=global_score,
         metrics={"val_acc": val_acc, "test_acc": test_acc},
     )
+
+
+def build_consequent_similarity_corruptor(
+    problems: List[Problem],
+    cfg: Dict[str, object],
+    seed: int,
+):
+    if not (TORCH_AVAILABLE and TRANSFORMERS_AVAILABLE):
+        raise RuntimeError("torch/transformers required for neural selector")
+
+    est_cfg = cfg.get("estimator", {})
+    if not isinstance(est_cfg, dict):
+        est_cfg = {}
+    neural_cfg = cfg.get("neural_selector", {})
+    if not isinstance(neural_cfg, dict):
+        neural_cfg = {}
+
+    batch_size = int(est_cfg.get("batch_size", 32))
+    max_length = int(est_cfg.get("max_length", 128))
+    top_k = int(neural_cfg.get("top_k", 8))
+    use_gpu = bool(est_cfg.get("use_gpu_if_available", False))
+
+    random.seed(seed)
+    torch.manual_seed(seed)
+
+    cons2idx, idx2cons = build_consequent_vocabulary(problems)
+    if len(cons2idx) < 2:
+        raise RuntimeError(
+            f"Neural selector requires >=2 consequent classes; got classes={len(cons2idx)}."
+        )
+
+    device = "cuda" if (use_gpu and torch.cuda.is_available()) else "cpu"
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+    encoder = AutoModel.from_pretrained("distilbert-base-uncased")
+    encoder.to(device)
+    for param in encoder.parameters():
+        param.requires_grad = False
+
+    consequent_texts = [prop_to_text(idx2cons[i]) for i in range(len(idx2cons))]
+    consequent_emb = encode_texts_with_distilbert(
+        consequent_texts,
+        tokenizer,
+        encoder,
+        batch_size=batch_size,
+        max_length=max_length,
+        device=device,
+    )
+    if consequent_emb.shape[0] != len(idx2cons):
+        raise RuntimeError("Failed to build full consequent embedding table.")
+
+    normalized = consequent_emb.clone()
+    norms = normalized.norm(p=2, dim=1, keepdim=True).clamp(min=1e-8)
+    normalized = normalized / norms
+    sim_matrix = normalized @ normalized.T
+    sim_matrix.fill_diagonal_(-1.0)
+
+    k_eff = max(1, min(top_k, len(idx2cons) - 1))
+    top_vals, top_idxs = torch.topk(sim_matrix, k=k_eff, dim=1)
+
+    neighbor_candidates: Dict[int, List[Tuple[int, float]]] = {}
+    for i in range(len(idx2cons)):
+        cand_list: List[Tuple[int, float]] = []
+        for j_idx, j in enumerate(top_idxs[i].tolist()):
+            score = float(top_vals[i][j_idx].item())
+            if j == i:
+                continue
+            cand_list.append((int(j), score))
+        neighbor_candidates[i] = cand_list
+
+    flat_top1 = [float(top_vals[i][0].item()) for i in range(len(idx2cons))]
+    metrics = {
+        "top_k": float(k_eff),
+        "vocab_size": float(len(idx2cons)),
+        "mean_top1_similarity": statistics.mean(flat_top1) if flat_top1 else 0.0,
+        "median_top1_similarity": statistics.median(flat_top1) if flat_top1 else 0.0,
+        "num_classes": float(len(cons2idx)),
+        "num_records": float(sum(len(p.schemas) for p in problems)),
+    }
+    return cons2idx, idx2cons, neighbor_candidates, metrics
+
+
+def apply_neural_corruption(
+    base_problems: List[Problem],
+    cons2idx: Dict[str, int],
+    idx2cons: Dict[int, str],
+    neighbor_candidates: Dict[int, List[Tuple[int, float]]],
+    cfg: Dict[str, object],
+    seed: int,
+) -> Tuple[List[Problem], Dict[str, object]]:
+    neural_cfg = cfg.get("neural_selector", {})
+    if not isinstance(neural_cfg, dict):
+        neural_cfg = {}
+    corruption_rate = float(neural_cfg.get("corruption_rate", 0.3))
+    sample_strategy = str(neural_cfg.get("sample_strategy", "similarity_weighted")).strip().lower()
+
+    rng = random.Random(deterministic_seed("neural_corruption", seed))
+    problems = copy.deepcopy(base_problems)
+    vant_by_problem: List[set[str]] = []
+
+    for problem in problems:
+        vant: set[str] = set()
+        for s in problem.schemas:
+            for ant in s.antecedents:
+                ant_n = normalize_prop(ant)
+                if ant_n:
+                    vant.add(ant_n)
+        vant_by_problem.append(vant)
+
+    total_schemas = 0
+    total_corrupted = 0
+    selected_for_corruption = 0
+    errors_in_vant = 0
+    errors_out_vant = 0
+    similarity_values: List[float] = []
+
+    for pi, problem in enumerate(problems):
+        for schema in problem.schemas:
+            total_schemas += 1
+            true_cons = normalize_prop(schema.consequent)
+            true_idx = cons2idx.get(true_cons)
+            if true_idx is None:
+                schema.corrupted = False
+                continue
+            candidates = neighbor_candidates.get(int(true_idx), [])
+            if not candidates:
+                schema.corrupted = False
+                continue
+            if rng.random() >= corruption_rate:
+                schema.corrupted = False
+                continue
+            selected_for_corruption += 1
+
+            replacement_idx: Optional[int] = None
+            replacement_sim = -1.0
+            if sample_strategy == "uniform":
+                choice_idx, choice_sim = rng.choice(candidates)
+                replacement_idx = int(choice_idx)
+                replacement_sim = float(choice_sim)
+            else:
+                # Similarity-weighted sampling produces structured, near-neighbor mistakes.
+                weights = [max(0.0, float(sim)) + 1e-6 for _, sim in candidates]
+                total_w = sum(weights)
+                pick = rng.random() * total_w
+                running = 0.0
+                for (cand_idx, cand_sim), w in zip(candidates, weights):
+                    running += w
+                    if running >= pick:
+                        replacement_idx = int(cand_idx)
+                        replacement_sim = float(cand_sim)
+                        break
+                if replacement_idx is None:
+                    replacement_idx = int(candidates[-1][0])
+                    replacement_sim = float(candidates[-1][1])
+
+            pred_cons = normalize_prop(idx2cons.get(int(replacement_idx), ""))
+            if not pred_cons or pred_cons == true_cons:
+                schema.corrupted = False
+                continue
+
+            total_corrupted += 1
+            similarity_values.append(replacement_sim)
+            schema.corrupted = True
+            schema.consequent = pred_cons
+            schema.text = f"if {' and '.join(schema.antecedents)} then {pred_cons}"
+
+            if pred_cons in vant_by_problem[pi]:
+                errors_in_vant += 1
+            else:
+                errors_out_vant += 1
+
+    effective_rate = total_corrupted / max(1, total_schemas)
+    in_vant_fraction = errors_in_vant / max(1, total_corrupted)
+    stats = {
+        "total_schemas": float(total_schemas),
+        "selected_for_corruption": float(selected_for_corruption),
+        "total_corrupted": float(total_corrupted),
+        "neural_error_rate": effective_rate,
+        "target_corruption_rate": float(corruption_rate),
+        "errors_in_vant": float(errors_in_vant),
+        "errors_out_vant": float(errors_out_vant),
+        "in_vant_fraction": in_vant_fraction,
+        "out_vant_fraction": 1.0 - in_vant_fraction,
+        "mean_replacement_similarity": statistics.mean(similarity_values) if similarity_values else 0.0,
+        "median_replacement_similarity": statistics.median(similarity_values) if similarity_values else 0.0,
+        "sample_strategy": 1.0 if sample_strategy == "similarity_weighted" else 0.0,
+    }
+    return problems, stats
 
 
 def train_reliability_estimator(
@@ -3057,17 +3276,51 @@ def run_dataset_experiments(
 
     base = load_problems_base(run_cfg, dataset_key=dataset_key)
     boardgame_mode = dataset_key == "boardgameqa"
+    neural_cfg = run_cfg.get("neural_selector", {})
+    if not isinstance(neural_cfg, dict):
+        neural_cfg = {}
+    neural_enabled = bool(neural_cfg.get("enabled", False)) and not boardgame_mode
+
     eval_conditions: Tuple[str, ...] = ("clean",) if boardgame_mode else CONDITIONS
+    if not neural_enabled:
+        eval_conditions = tuple(c for c in eval_conditions if c != "neural")
     chain_error_mode = "preference" if boardgame_mode else "corruption"
 
     # Build per-condition/seed datasets from same base sample.
     datasets: Dict[str, Dict[int, List[Problem]]] = {cond: {} for cond in eval_conditions}
     for cond in eval_conditions:
+        if cond == "neural":
+            continue
         for seed in seeds:
             if boardgame_mode:
                 datasets[cond][seed] = copy.deepcopy(base)
             else:
                 datasets[cond][seed] = apply_noise(base, cond, seed, run_cfg)
+
+    neural_error_analysis: Dict[str, Dict[str, float]] = {}
+    neural_selector_metrics: Dict[str, Dict[str, float]] = {}
+    if "neural" in datasets:
+        for seed in seeds:
+            cons2idx, idx2cons, neighbor_candidates, cls_metrics = build_consequent_similarity_corruptor(
+                base,
+                run_cfg,
+                seed,
+            )
+            neural_probs, neural_stats = apply_neural_corruption(
+                base_problems=base,
+                cons2idx=cons2idx,
+                idx2cons=idx2cons,
+                neighbor_candidates=neighbor_candidates,
+                cfg=run_cfg,
+                seed=seed,
+            )
+            datasets["neural"][seed] = neural_probs
+            neural_error_analysis[str(seed)] = {
+                k: float(v) for k, v in neural_stats.items()
+            }
+            neural_selector_metrics[str(seed)] = {
+                k: float(v) for k, v in cls_metrics.items()
+            }
 
     per_condition: Dict[str, object] = {}
     clean_fnr_vals: List[float] = []
@@ -3114,7 +3367,7 @@ def run_dataset_experiments(
             model: aggregate_seed_rows(rows) for model, rows in per_model_rows.items()
         }
 
-    return {
+    out: Dict[str, object] = {
         "conditions": per_condition,
         "dataset_key": dataset_key,
         "clean_false_negative_rate": statistics.mean(clean_fnr_vals) if clean_fnr_vals else 0.0,
@@ -3125,6 +3378,10 @@ def run_dataset_experiments(
         "datasets": datasets,
         "default_policy": str(run_cfg.get("reasoner", {}).get("default_policy", "closed_world")),
     }
+    if neural_error_analysis:
+        out["neural_error_analysis"] = neural_error_analysis
+        out["neural_selector_metrics"] = neural_selector_metrics
+    return out
 
 
 def run_ruletaker_experiments(cfg: Dict[str, object]) -> Dict[str, object]:
@@ -3456,6 +3713,34 @@ def ordered_present_conditions(conditions: Dict[str, object]) -> List[str]:
     return ordered
 
 
+def build_neural_analysis_table(neural_stats: Dict[str, Dict[str, float]]) -> List[str]:
+    lines: List[str] = []
+    lines.append("### Neural Error Distribution Analysis")
+    lines.append("")
+    lines.append(
+        "| Seed | Target Rate | Applied Rate | In-Vant (cascade-enabling) | Out-Vant (cascade-preventing) | Mean Replacement Similarity |"
+    )
+    lines.append("|---:|---:|---:|---:|---:|---:|")
+    in_vant_vals: List[float] = []
+    for seed in sorted(neural_stats.keys(), key=int):
+        stats = neural_stats[seed]
+        in_vant = float(stats.get("in_vant_fraction", 0.0))
+        out_vant = float(stats.get("out_vant_fraction", 0.0))
+        lines.append(
+            f"| {seed} | {float(stats.get('target_corruption_rate', 0.0)):.3f} | "
+            f"{float(stats.get('neural_error_rate', 0.0)):.3f} | "
+            f"{in_vant:.3f} ({int(stats.get('errors_in_vant', 0.0))}) | "
+            f"{out_vant:.3f} ({int(stats.get('errors_out_vant', 0.0))}) | "
+            f"{float(stats.get('mean_replacement_similarity', 0.0)):.3f} |"
+        )
+        in_vant_vals.append(in_vant)
+    mean_in_vant = statistics.mean(in_vant_vals) if in_vant_vals else 0.0
+    lines.append("")
+    lines.append(f"**Mean in-Vant fraction: {mean_in_vant:.3f}**")
+    lines.append("")
+    return lines
+
+
 def build_report(
     hardware: Dict[str, object],
     ruletaker: Dict[str, object],
@@ -3550,6 +3835,23 @@ def build_report(
                     f"| {model_label.get(model, model)} | "
                     f"{float(rn.get('accuracy_mean', 0.0)):.3f} | {float(rn.get('cascade_mean', 0.0)):.3f} | {float(rn.get('chain_error_mean', 0.0)):.3f} | "
                     f"{float(rr.get('accuracy_mean', 0.0)):.3f} | {float(rr.get('cascade_mean', 0.0)):.3f} | {float(rr.get('chain_error_mean', 0.0)):.3f} |"
+                )
+            lines.append("")
+
+        rows_neural = conditions.get("neural", {})
+        if isinstance(rows_neural, dict) and rows_neural:
+            lines.append("### Neural (Embedding-Similarity Corruption)")
+            lines.append("| Model | Neural Acc | Neural Cascade | Neural Chain |")
+            lines.append("|---|---:|---:|---:|")
+            for model in MODELS:
+                rn = rows_neural.get(model, {})
+                if not isinstance(rn, dict):
+                    rn = {}
+                lines.append(
+                    f"| {model_label.get(model, model)} | "
+                    f"{float(rn.get('accuracy_mean', 0.0)):.3f} | "
+                    f"{float(rn.get('cascade_mean', 0.0)):.3f} | "
+                    f"{float(rn.get('chain_error_mean', 0.0)):.3f} |"
                 )
             lines.append("")
 
@@ -3686,6 +3988,19 @@ def build_report(
                         "- Treat architectural differences as directional unless coverage is improved."
                     )
                     lines.append("")
+
+        neural_stats_obj = dataset_results.get("neural_error_analysis", {})
+        if isinstance(neural_stats_obj, dict) and neural_stats_obj:
+            typed_stats: Dict[str, Dict[str, float]] = {}
+            for seed, stats in neural_stats_obj.items():
+                if isinstance(stats, dict):
+                    typed_stats[str(seed)] = {
+                        str(k): float(v) for k, v in stats.items() if isinstance(v, (int, float))
+                    }
+            if typed_stats:
+                lines.append(f"## {title} Neural Selector Diagnostics")
+                lines.extend(build_neural_analysis_table(typed_stats))
+                lines.append("")
 
     if ruletaker and isinstance(ruletaker, dict) and isinstance(ruletaker.get("conditions"), dict):
         append_dataset_section("RuleTaker", "ruletaker", ruletaker)
